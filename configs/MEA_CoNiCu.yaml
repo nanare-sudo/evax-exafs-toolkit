@@ -1,0 +1,174 @@
+# ============================================================
+# Proben-Konfiguration: CoNiCu Medium Entropy Alloy (MEA)
+# ============================================================
+# Diese Datei definiert alle Parameter fuer die EvAX-Analyse.
+# Kopiere diese Datei und passe sie fuer deine eigene Probe an.
+#
+# Ausfuehrung:
+#   python run.py configs/MEA_CoNiCu.yaml                    # Einzelner Run
+#   python run.py configs/MEA_CoNiCu.yaml --parameter-scan   # Parameterstudie
+#   python run.py configs/MEA_CoNiCu.yaml --structure-compare # FCC vs BCC vs HCP
+#   python run.py configs/MEA_CoNiCu.yaml --plot              # Nur Plots erstellen
+# ============================================================
+
+# --- Probenname (wird in Plots und Dateinamen verwendet) ---
+name: MEA_CoNiCu
+description: "Medium Entropy Alloy CoNiCu — 3 Kanten gleichzeitig"
+
+# --- Elemente und Kanten ---
+# edges:      Liste der Absorberelemente
+# edge_types: Kantentyp pro Element (K, L1, L2, L3, ...)
+#             3d-Metalle (Co,Ni,Cu,Fe,...) → K
+#             5d-Metalle (Pt,Au,W,...) → L3 (K-Kante zu hoch)
+edges: [Co, Ni, Cu]
+edge_types: [K, K, K]
+
+# --- Experimentelle chi(k)-Dateien ---
+# Zweispaltig: k (1/Angstrom) | chi(k) (dimensionslos)
+# Relative Pfade ab Projektverzeichnis
+chi_files:
+  Co: data/chi_extracted/MEA_Co_chi.dat
+  Ni: data/chi_extracted/MEA_Ni_chi.dat
+  Cu: data/chi_extracted/MEA_Cu_chi.dat
+
+# --- Startstruktur (POSCAR-Format) ---
+# Fuer den Hauptrun und Parameter-Scan
+structure_file: structures/MEA_CoNiCu.p1
+n_atoms: 256  # Gesamtzahl der Atome in der Superzelle
+
+# --- Strukturvergleich (optional) ---
+# Verschiedene Kristallstrukturen zum Vergleichen
+structure_comparison:
+  fcc:
+    file: structures/MEA_CoNiCu.p1
+    label: FCC
+    lattice_constant: 3.54  # Angstrom
+    supercell: "4x4x4"
+  bcc:
+    file: structures/MEA_CoNiCu_bcc.p1
+    label: BCC
+    lattice_constant: 2.87
+    supercell: "4x4x8"
+  hcp:
+    file: structures/MEA_CoNiCu_hcp.p1
+    label: HCP
+    lattice_constant: 2.51
+    c_over_a: 1.62
+    supercell: "8x4x4"
+
+# ============================================================
+# EvAX-Parameter
+# ============================================================
+# Detaillierte Erklaerung aller Parameter: siehe PARAMETER_GUIDE.md
+
+parameters:
+
+  # --- Vergleichsraum ---
+  # Space: Wie Theorie und Experiment verglichen werden
+  #   k  = im k-Raum (schnell, aber wenig sensitiv)
+  #   R  = im R-Raum (Fourier-Transformierte)
+  #   w  = im Wavelet-Raum (2D, k+R gleichzeitig — EMPFOHLEN)
+  Space: w
+
+  # --- k-Bereich ---
+  # k_min: Untere Grenze (Angstrom^-1). Unter ~3 dominiert Hintergrund.
+  # k_max: Obere Grenze. Abhaengig vom Signal-Rausch-Verhaeltnis.
+  #        Kann pro Kante verschieden sein, z.B. [11.5, 11.5, 14]
+  k_min: 3
+  k_max: [11.5, 11.5, 11.5]
+
+  # --- k-Gewichtung ---
+  # k_power: Exponent n in chi(k)*k^n
+  #   1 = betont niedrige k (leichte Elemente)
+  #   2 = Kompromiss (EMPFOHLEN)
+  #   3 = betont hohe k (schwere Elemente)
+  k_power: 2
+
+  # --- Mehrfachstreuung ---
+  # N_legs: Max. Anzahl Streuarme pro Pfad
+  #   2 = nur Einfachstreuung (Absorber → Nachbar → zurueck)
+  #   4 = inkl. Dreifach-/Vierfachstreuung (EMPFOHLEN, genauer)
+  N_legs: 4
+
+  # --- FEFF-Clusterradius ---
+  # R_max_for_FEFF: Radius (Angstrom) um jeden Absorber, fuer den
+  #                 FEFF Streupfade berechnet. Groessere Werte = mehr
+  #                 Nachbarschalen, aber laengere Rechenzeit.
+  #   4 = nur naechste Nachbarn (schnell)
+  #   6 = bis 3. Nachbarschale (EMPFOHLEN)
+  R_max_for_FEFF: [6, 6, 6]
+
+  # --- Optimierung ---
+  # Maximal_step_length: Max. Verschiebung pro Atom pro Iteration (Angstrom)
+  #   0.001 = sehr fein (langsam, aber praezise)
+  #   0.005 = Standard (EMPFOHLEN)
+  #   0.01  = grob (schnell, aber ungenau)
+  Maximal_step_length: 0.005
+
+  # Maximal_displacement: Max. Gesamtverschiebung eines Atoms (Angstrom)
+  #   Begrenzt, wie weit sich die Struktur vom Startmodell entfernen darf.
+  #   0.2 = konservativ (nah am Startgitter)
+  #   0.4 = Standard (EMPFOHLEN)
+  #   0.8 = sehr flexibel (Vorsicht: kann zu unphysikalischen Strukturen fuehren)
+  Maximal_displacement: 0.4
+
+  # Initial_displacement: Anfaengliche Zufallsauslenkung (Angstrom)
+  #   Bricht die perfekte Gittersymmetrie. 0.01-0.05 ist ueblich.
+  Initial_displacement: 0.01
+
+  # --- Konvergenz ---
+  # Stop_after: Iterationen in der Screening-Phase
+  #   (FEFF-Basis wird haeufiger aktualisiert)
+  #   Parameter-Scan: 50 reicht zum Vergleichen
+  #   Produktion:     100-300
+  Stop_after: 100
+
+  # Froze_in: Abbruch nach N Iterationen ohne Verbesserung
+  #   Parameter-Scan: 50
+  #   Produktion:     150-500
+  Froze_in: 150
+
+  # Number_of_states: Parallele Strukturkopien im EA
+  #   Standard: 16 (nicht aendern, es sei denn du weisst was du tust)
+  Number_of_states: 16
+
+# ============================================================
+# Parameter-Scan Einstellungen
+# ============================================================
+# Welche Parameter sollen variiert werden?
+# Der Scan testet alle Kombinationen (Gittersuche).
+
+parameter_scan:
+  # Reduzierte Iterationen fuer schnellen Vergleich
+  screening_iterations: 50
+  froze_in: 50
+  max_parallel: 4  # Gleichzeitige EvAX-Instanzen (abhaengig von CPU-Kernen)
+
+  # Phase 1: Fit-Parameter (welcher Raum, welche Gewichtung?)
+  phase1:
+    k_min: [2, 3]
+    k_power: [1, 2, 3]
+    Space: [w, R, k]
+    N_legs: [2, 4]
+
+  # Phase 2: Optimierungsparameter (mit besten Fit-Parametern aus Phase 1)
+  phase2:
+    Maximal_step_length: [0.001, 0.003, 0.005]
+    Maximal_displacement: [0.2, 0.4]
+    R_max_for_FEFF: [[4,4,4], [6,6,6]]
+
+# ============================================================
+# Strukturvergleich Einstellungen
+# ============================================================
+structure_compare:
+  screening_iterations: 100
+  froze_in: 150
+  max_parallel: 3  # Eine Instanz pro Struktur
+
+# ============================================================
+# Software-Pfade
+# ============================================================
+# Relative Pfade ab Projektverzeichnis
+software:
+  evax: software/EvAX-6.16_linux.exe
+  feff: feff85exafs/legacy/mod/MONO/feff85L

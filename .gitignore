@@ -1,0 +1,94 @@
+# ============================================================
+# EvAX EXAFS Analysis — .gitignore
+# ============================================================
+
+# --- Binaries (too large / not redistributable) ---
+software/
+feff85exafs/
+*.exe
+feff
+feff85L
+
+# --- Experimental data (each user brings their own) ---
+data/athena_projects/
+data/chi_extracted/*.dat
+
+# --- EvAX working directories & outputs ---
+MEA_analysis/output_files*/
+MEA_analysis/parameter_scan/
+MEA_analysis/structure_comparison/
+MEA_analysis/evax_temp/
+MEA_analysis/feff_*/
+MEA_analysis/*.log
+MEA_analysis/log.dat
+MEA_analysis/output.xyz
+MEA_analysis/parameters_run*.dat
+MEA_analysis/parameters_scan_*.dat
+MEA_analysis/parameters_MEA_run*.dat
+MEA_analysis/restart*
+MEA_analysis/approx_*.dat
+MEA_analysis/clusters_*.dat
+MEA_analysis/precise_*.dat
+MEA_analysis/histoEXAFS.dat
+MEA_analysis/window_*
+MEA_analysis/tempfile
+MEA_analysis/fort.*
+MEA_analysis/atoms.dat
+MEA_analysis/EvAX.exe
+MEA_analysis/feff
+output/
+
+# --- General EvAX run artifacts ---
+**/work/
+**/output_files/
+**/feff_*/
+**/evax_temp/
+**/approx_*.dat
+**/clusters_*.dat
+**/window_*
+**/tempfile
+**/fort.*
+**/atoms.dat
+**/*.log
+
+# --- Generated figures (reproducible from scripts) ---
+figures/*.png
+figures/*.pdf
+
+# --- LaTeX build artifacts ---
+EvAX_Hausarbeit/*.aux
+EvAX_Hausarbeit/*.log
+EvAX_Hausarbeit/*.out
+EvAX_Hausarbeit/*.toc
+EvAX_Hausarbeit/*.bbl
+EvAX_Hausarbeit/*.bcf
+EvAX_Hausarbeit/*.blg
+EvAX_Hausarbeit/*.run.xml
+EvAX_Hausarbeit/*.synctex*
+EvAX_Hausarbeit/*.fdb_latexmk
+EvAX_Hausarbeit/*.fls
+EvAX_Hausarbeit/*.pdf
+EvAX_Hausarbeit.zip
+
+# --- Large docs (not redistributable) ---
+docs/*.pdf
+
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+*~
+*.swp
+
+# --- IDE ---
+.vscode/
+.idea/
+
+# --- Claude ---
+.claude/

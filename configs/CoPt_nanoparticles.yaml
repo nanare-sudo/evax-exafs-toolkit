@@ -1,0 +1,87 @@
+# ============================================================
+# Proben-Konfiguration: CoPt Nanopartikel
+# ============================================================
+# Ausfuehrung:
+#   python run.py configs/CoPt_nanoparticles.yaml
+#   python run.py configs/CoPt_nanoparticles.yaml --parameter-scan
+# ============================================================
+
+name: CoPt_nanoparticles
+description: "CoPt Nanopartikel — Co K-Kante + Pt L3-Kante"
+
+# --- Elemente und Kanten ---
+# Co: 3d-Metall → K-Kante (7709 eV)
+# Pt: 5d-Metall → L3-Kante (11564 eV), weil K-Kante bei ~78 keV zu hoch
+edges: [Co, Pt]
+edge_types: [K, L3]
+
+# --- Experimentelle chi(k)-Dateien ---
+chi_files:
+  Co: data/chi_extracted/WB4_Co_avg_85_86_txt_chi.dat
+  Pt: data/chi_extracted/WB4_Pt_scan88_txt_chi.dat
+
+# --- Startstruktur ---
+# TODO: POSCAR-Datei fuer CoPt erstellen (z.B. L10-Struktur oder FCC)
+# Beispiel: 4x4x4 FCC mit 256 Atomen, 50% Co / 50% Pt
+structure_file: structures/CoPt.p1
+n_atoms: 256
+
+# --- Strukturvergleich (optional) ---
+# Relevante Strukturen fuer CoPt-Nanopartikel:
+#   - FCC (ungeordnet, Mischkristall)
+#   - L10 (geordnet, abwechselnd Co/Pt-Schichten)
+#   - L12 (Co3Pt oder CoPt3)
+# structure_comparison:
+#   fcc:
+#     file: structures/CoPt_fcc.p1
+#     label: FCC
+#   l10:
+#     file: structures/CoPt_l10.p1
+#     label: L10
+
+# ============================================================
+# EvAX-Parameter
+# ============================================================
+
+parameters:
+  Space: w
+  k_min: 3
+  k_max: [11.5, 11.5]     # Pro Kante: [Co, Pt]
+  k_power: 2
+  N_legs: 4
+  R_max_for_FEFF: [6, 6]  # Pro Kante
+  Maximal_step_length: 0.005
+  Maximal_displacement: 0.4
+  Initial_displacement: 0.01
+  Stop_after: 100
+  Froze_in: 150
+  Number_of_states: 16
+
+# ============================================================
+# Parameter-Scan
+# ============================================================
+parameter_scan:
+  screening_iterations: 50
+  froze_in: 50
+  max_parallel: 4
+  phase1:
+    k_min: [2, 3]
+    k_power: [1, 2, 3]
+    Space: [w, R, k]
+    N_legs: [2, 4]
+  phase2:
+    Maximal_step_length: [0.001, 0.003, 0.005]
+    Maximal_displacement: [0.2, 0.4]
+    R_max_for_FEFF: [[4,4], [6,6]]
+
+structure_compare:
+  screening_iterations: 100
+  froze_in: 150
+  max_parallel: 3
+
+# ============================================================
+# Software-Pfade
+# ============================================================
+software:
+  evax: software/EvAX-6.16_linux.exe
+  feff: feff85exafs/legacy/mod/MONO/feff85L

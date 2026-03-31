@@ -1,0 +1,193 @@
+% =============================================================================
+% Analyse-Pipeline: saubere vertikale Darstellung
+% =============================================================================
+\begin{figure}[p]
+  \centering
+  \begin{tikzpicture}[
+    scale=0.82, transform shape,
+    % Styles
+    step/.style={
+      draw, rounded corners=4pt, fill=#1,
+      text width=12cm, align=left, minimum height=1cm,
+      font=\small, inner sep=8pt
+    },
+    step/.default={blue!6},
+    filebox/.style={
+      draw, fill=yellow!12, rounded corners=2pt,
+      font=\scriptsize\ttfamily, inner sep=4pt
+    },
+    heading/.style={
+      font=\small\bfseries, anchor=west
+    },
+    arr/.style={-{Stealth[length=5pt]}, thick, gray!70},
+    loopback/.style={-{Stealth[length=5pt]}, thick, red!50!black, rounded corners=4pt},
+  ]
+
+    % ── 1. Messung ──────────────────────────────────────────────────────────
+    \node[step=blue!8] (S1) at (0, 0) {
+      \textbf{1 \enspace Synchrotron-Messung}\\[3pt]
+      Absorptionsspektrum $\mu(E)$ im Bereich
+      \num{7500}--\SI{10000}{eV}.
+      Ein einziger Energiescan deckt die K-Kanten
+      von Co (\SI{7709}{eV}), Ni (\SI{8333}{eV}) und
+      Cu (\SI{8979}{eV}) gleichzeitig ab.
+    };
+
+    % ── 2. Athena ───────────────────────────────────────────────────────────
+    \node[step=orange!8, below=0.45cm of S1] (S2) {
+      \textbf{2 \enspace Vorverarbeitung in Athena}\\[3pt]
+      Import der Rohdaten, visuelle Kontrolle,
+      erste $E_0$-Bestimmung.
+      Export als Athena-Projekt
+      \,\tikz[baseline=-0.3ex]{\node[filebox]{MEA\_athena.prj};}
+    };
+    \draw[arr] (S1) -- (S2);
+
+    % ── 3. Extraktion ──────────────────────────────────────────────────────
+    \node[step=orange!8, below=0.45cm of S2] (S3) {
+      \textbf{3 \enspace $\chi(k)$-Extraktion mit larch}\\[3pt]
+      Neu-Extraktion nötig, da Multi-Edge-Normierung in
+      Athena fehlerhafte Kantensprünge lieferte.
+      Pro Kante wird ein separates Energiefenster gesetzt
+      (Co: ${\leq}\SI{8233}{eV}$,
+       Ni: \SIrange{8100}{8879}{eV},
+       Cu: ${\geq}\SI{8700}{eV}$).\\[3pt]
+      Schritte: $E_0$ bestimmen $\to$
+      Pre-Edge abziehen $\to$
+      auf $\Delta\mu_0 = 1$ normieren $\to$
+      Hintergrund entfernen (\texttt{autobk}, $R_\text{bkg}=\SI{1.0}{\AA}$)
+      $\to$ Umrechnung $E \to k$.\\[4pt]
+      Ausgabe:\enspace
+      \tikz[baseline=-0.3ex]{\node[filebox]{MEA\_Co\_chi.dat};}\enspace
+      \tikz[baseline=-0.3ex]{\node[filebox]{MEA\_Ni\_chi.dat};}\enspace
+      \tikz[baseline=-0.3ex]{\node[filebox]{MEA\_Cu\_chi.dat};}\\
+      {\scriptsize Jeweils zwei Spalten: $k$ (\AA$^{-1}$) und $\chi(k)$.}
+    };
+    \draw[arr] (S2) -- (S3);
+
+    % ── 4. Startmodell ─────────────────────────────────────────────────────
+    \node[step=green!8, below=0.45cm of S3] (S4) {
+      \textbf{4 \enspace Startmodell (Superzelle)}\\[3pt]
+      Kristallstruktur wählen (FCC, BCC oder HCP) und
+      $4{\times}4{\times}4$-Superzelle mit 256 Atomen
+      (85\,Co, 85\,Ni, 86\,Cu, zufällig verteilt) erzeugen.
+      Format: POSCAR mit Gittervektoren und fraktionellen
+      Koordinaten.\\[4pt]
+      Ausgabe:\enspace
+      \tikz[baseline=-0.3ex]{\node[filebox]{MEA\_CoNiCu.p1};}
+    };
+    \draw[arr] (S3) -- (S4);
+
+    % ── 5. Konfiguration ──────────────────────────────────────────────────
+    \node[step=green!8, below=0.45cm of S4] (S5) {
+      \textbf{5 \enspace Konfiguration}
+      \hfill\tikz[baseline=-0.3ex]{\node[filebox]{parameters.dat};}\\[3pt]
+      Zentrale Steuerdatei mit allen Einstellungen:
+      $k$-Bereich (\SIrange{3}{11.5}{\per\AA}),
+      $k$-Gewichtung ($k^2$),
+      Vergleichsraum (Wavelet),
+      Streupfade ($N_\text{legs}=4$),
+      FEFF-Clusterradius (\SI{6}{\AA}),
+      Schrittweite, Konvergenzkriterien.\\[3pt]
+      Die Option \texttt{-autoES} bestimmt $S_0^2$ und $\Delta E_0$
+      automatisch vor dem Hauptlauf.
+    };
+    \draw[arr] (S4) -- (S5);
+
+    % ── 6. EvAX-Kern ──────────────────────────────────────────────────────
+    \node[step=red!6, below=0.45cm of S5,
+          draw=red!40!black, thick] (S6) {
+      \textbf{6 \enspace EvAX-Optimierung}
+      \hfill{\small\texttt{./EvAX.exe parameters.dat -autoES}}\\[4pt]
+      %
+      \begin{minipage}[t]{5.5cm}
+        \textbf{Iterationsschleife:}\\[2pt]
+        {\scriptsize
+        \textbf{a)} Zufälliges Atom verschieben\\
+        \quad\enspace (max.\ \SI{0.005}{\AA}/Schritt)\\[1pt]
+        \textbf{b)} FEFF berechnet Streuphasen\\
+        \quad\enspace für die neue Umgebung\\[1pt]
+        \textbf{c)} $\chi_\text{calc}(k)$ mitteln über alle\\
+        \quad\enspace Absorber gleichen Typs\\[1pt]
+        \textbf{d)} Vergleich mit $\chi_\text{exp}(k)$\\
+        \quad\enspace im Wavelet-Raum\\[1pt]
+        \textbf{e)} Metropolis-Akzeptanz:\\
+        \quad\enspace besser $\to$ behalten,\\
+        \quad\enspace schlechter $\to$ evtl.\ behalten\\[1pt]
+        $\to$ zurück zu \textbf{a)}
+        }
+      \end{minipage}%
+      \hfill
+      \begin{minipage}[t]{5.5cm}
+        \textbf{FEFF-Dateien im Arbeitsverz.:}\\[2pt]
+        {\scriptsize
+        \tikz[baseline=-0.3ex]{\node[filebox]{feff};} Binary (feff85L)\\[2pt]
+        \tikz[baseline=-0.3ex]{\node[filebox]{run-FEFF.exe};} Shell-Wrapper\\[2pt]
+        \tikz[baseline=-0.3ex]{\node[filebox]{feff\_0/ feff\_1/};} je Kante:\\
+        \quad \texttt{feff.inp} -- Eingabe (Cluster)\\
+        \quad \texttt{feff.bin} -- Streuphasen\\
+        \quad \texttt{chi.dat} -- berechnetes $\chi(k)$\\[4pt]
+        \textbf{Evolutionärer Algorithmus:}\\[2pt]
+        16 parallele Strukturkopien (States).\\
+        Alle $\sim$100 Iterationen: schlechte\\
+        States durch gute ersetzen +\\
+        leichte Mutationen.
+        }
+      \end{minipage}
+    };
+    \draw[arr] (S5) -- (S6);
+
+    % ── 7. Ausgaben ───────────────────────────────────────────────────────
+    \node[step=purple!6, below=0.45cm of S6] (S7) {
+      \textbf{7 \enspace Ausgaben}
+      \hfill{\scriptsize Verzeichnis \texttt{output\_files/}}\\[4pt]
+      \tikz[baseline=-0.3ex]{\node[filebox]{output.dat};}
+        {\scriptsize\enspace Residual vs.\ Iteration (Konvergenz)}\hfill
+      \tikz[baseline=-0.3ex]{\node[filebox]{final.xyz};}
+        {\scriptsize\enspace optimierte 256 Atompositionen}\\[3pt]
+      \tikz[baseline=-0.3ex]{\node[filebox]{Co/EXAFS.dat};}
+        {\scriptsize\enspace $\chi_\text{calc}(k)$ und $\chi_\text{exp}(k)$
+         pro Kante}\hfill
+      \tikz[baseline=-0.3ex]{\node[filebox]{Co/expFT.dat};}
+        {\scriptsize\enspace Fouriertransformierte}\\[3pt]
+      \tikz[baseline=-0.3ex]{\node[filebox]{Co/RDF\_Co\_Ni.dat};}
+        {\scriptsize\enspace partielle Paarverteilungsfunktionen $g_{ij}(R)$}\hfill
+      \tikz[baseline=-0.3ex]{\node[filebox]{restart*};}
+        {\scriptsize\enspace Checkpoint zum Fortsetzen}
+    };
+    \draw[arr] (S6) -- (S7);
+
+    % ── 8. Auswertung ────────────────────────────────────────────────────
+    \node[step=green!10, below=0.45cm of S7,
+          draw=green!40!black] (S8) {
+      \textbf{8 \enspace Auswertung (Python)}\\[4pt]
+      \begin{minipage}[t]{5.5cm}
+        \tikz[baseline=-0.3ex]{\node[filebox]{plot\_results.py};}\\[2pt]
+        {\scriptsize Parst \texttt{output\_files/},
+         erzeugt Konvergenz-, EXAFS-,
+         FT-, RDF- und SRO-Plots.}
+      \end{minipage}%
+      \hfill
+      \begin{minipage}[t]{5.5cm}
+        \tikz[baseline=-0.3ex]{\node[filebox]{parameter\_scan.py};}\\[2pt]
+        {\scriptsize Automatisierte Variation aller
+         Fit-Parameter (83 Kombinationen,
+         6 parallele EvAX-Instanzen).}
+      \end{minipage}\\[6pt]
+      \textbf{Physikalische Ergebnisse:}\enspace
+      {\scriptsize
+      Koordinationszahlen $N_{ij}$,\enspace
+      Bindungslängen $\langle R_{ij}\rangle$,\enspace
+      Warren-Cowley-Parameter $\alpha_{ij}$,\enspace
+      Kristallstruktur.}
+    };
+    \draw[arr] (S7) -- (S8);
+
+  \end{tikzpicture}
+  \caption{Vollständige Analyse-Pipeline von der Synchrotron-Messung
+    bis zu den physikalischen Ergebnissen.
+    Gelbe Kästen bezeichnen konkrete Dateien.
+    Der rot umrandete Schritt~6 zeigt den iterativen Kern von \evax{},
+    in dem FEFF-Rechnungen und RMC-Optimierung zusammenwirken.}
+  \label{fig:full-pipeline}
+\end{figure}

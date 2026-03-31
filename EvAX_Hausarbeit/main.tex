@@ -1,0 +1,157 @@
+% =============================================================================
+% Hauptdatei: Hausarbeit Experimentelle Röntgenphysik
+% Kompilieren mit: pdflatex + biber (oder auf Overleaf: einfach hochladen)
+% =============================================================================
+\documentclass[
+  12pt,
+  a4paper,
+  twoside=false,
+  bibliography=totoc,
+  listof=totoc,
+  numbers=noenddot
+]{scrreprt}
+
+% ── Sprache und Encoding ────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+
+% ── Schrift ─────────────────────────────────────────────────────────────────
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% ── Seitenränder ────────────────────────────────────────────────────────────
+\usepackage[
+  left=2.5cm,
+  right=2.5cm,
+  top=2.5cm,
+  bottom=2.5cm
+]{geometry}
+
+% ── Mathematik ──────────────────────────────────────────────────────────────
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{bm}
+
+% ── Grafiken und Farbe ─────────────────────────────────────────────────────
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, calc, decorations.pathmorphing}
+
+% ── Tabellen ────────────────────────────────────────────────────────────────
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{siunitx}
+\sisetup{
+  locale = DE,
+  per-mode = symbol,
+  separate-uncertainty = true
+}
+
+% ── Floats ──────────────────────────────────────────────────────────────────
+\usepackage{float}
+\usepackage[font=small, labelfont=bf, format=plain]{caption}
+\usepackage{subcaption}
+
+% ── Literatur ───────────────────────────────────────────────────────────────
+\usepackage[
+  backend=biber,
+  style=numeric-comp,
+  sorting=none,
+  maxbibnames=6,
+  minbibnames=3,
+  doi=true,
+  isbn=false,
+  url=false
+]{biblatex}
+\addbibresource{references.bib}
+
+% ── Hyperlinks ──────────────────────────────────────────────────────────────
+\usepackage[
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=blue!60!black,
+  urlcolor=blue!70!black,
+  pdfauthor={},
+  pdftitle={Strukturanalyse mit EvAX},
+  bookmarksopen=true
+]{hyperref}
+
+% ── Kopf-/Fußzeilen ────────────────────────────────────────────────────────
+\usepackage[headsepline]{scrlayer-scrpage}
+\pagestyle{scrheadings}
+\clearpairofpagestyles
+\ohead{\pagemark}
+\ihead{\headmark}
+
+% ── Sonstiges ───────────────────────────────────────────────────────────────
+\usepackage{enumitem}
+\usepackage{csquotes}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  captionpos=b,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue!70!black},
+  commentstyle=\color{green!50!black},
+}
+
+% ── Eigene Befehle ──────────────────────────────────────────────────────────
+\newcommand{\evax}{\textsc{EvAX}}
+\newcommand{\feff}{\textsc{FEFF}}
+\newcommand{\chik}{\ensuremath{\chi(k)}}
+\newcommand{\chir}{\ensuremath{\chi(R)}}
+\newcommand{\kweight}[1]{\ensuremath{k^{#1}}}
+\newcommand{\Angstrom}{\text{\AA}}
+\newcommand{\TODO}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+\newcommand{\PLACEHOLDER}[1]{\textcolor{blue!70!black}{\textit{#1}}}
+
+% Kapiteltiefe im Inhaltsverzeichnis
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+
+% ── Absatzformatierung ──────────────────────────────────────────────────────
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5\baselineskip}
+
+% =============================================================================
+\begin{document}
+
+% ── Deckblatt ───────────────────────────────────────────────────────────────
+\input{chapters/deckblatt}
+
+% ── Abstract ────────────────────────────────────────────────────────────────
+\input{chapters/abstract}
+
+% ── Inhaltsverzeichnis ──────────────────────────────────────────────────────
+\tableofcontents
+\clearpage
+
+% ── Kapitel ─────────────────────────────────────────────────────────────────
+\input{chapters/einleitung}
+\input{chapters/theorie}
+\input{chapters/evax}
+\input{chapters/methodik}
+\input{chapters/auswertung}
+\input{chapters/diskussion}
+\input{chapters/fazit}
+
+% ── Anhang ──────────────────────────────────────────────────────────────────
+\appendix
+\input{chapters/anhang_workflow}
+
+% ── Literaturverzeichnis ────────────────────────────────────────────────────
+\printbibliography[title={Literaturverzeichnis}]
+
+% ── Abbildungsverzeichnis ───────────────────────────────────────────────────
+\listoffigures
+
+% ── Tabellenverzeichnis ─────────────────────────────────────────────────────
+\listoftables
+
+\end{document}

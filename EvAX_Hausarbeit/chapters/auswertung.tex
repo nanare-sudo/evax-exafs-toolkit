@@ -1,0 +1,371 @@
+% =============================================================================
+% Kapitel 5: Auswertung
+% =============================================================================
+\chapter{Ergebnisse}
+\label{ch:auswertung}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Parameterstudie}
+\label{sec:ergebnisse-paramscan}
+
+Die systematische Variation der Fit-Parameter über 83~Kombinationen
+ergab klare Trends, die in Abbildung~\ref{fig:param-scan} zusammengefasst
+sind.
+
+\begin{figure}[htbp]
+  \centering
+  \TODO{Hier fig8\_parameter\_scan.png und fig9\_parameter\_heatmap.png
+        einfügen.}
+  %\includegraphics[width=\textwidth]{fig8_parameter_scan.png}
+  %\includegraphics[width=\textwidth]{fig9_parameter_heatmap.png}
+  \caption{Ergebnisse der Parameterstudie.
+    Oben: Residuen aller 83~Läufe, sortiert nach Gesamtresidual.
+    Unten: Heatmaps der besten Residuen für Kombinationen aus
+    $k$-Gewichtung und Vergleichsraum (links), $k_{\min}$ und
+    $N_{\text{legs}}$ (Mitte) sowie kantenaufgelöste Residuen der
+    zehn besten Läufe (rechts).}
+  \label{fig:param-scan}
+\end{figure}
+
+Die wesentlichen Befunde sind:
+\begin{itemize}[nosep]
+  \item Der \textbf{Wavelet-Raum} liefert durchgehend niedrigere
+        Residuen als der $k$- oder $R$-Raum, da er simultane Empfindlichkeit
+        in beiden Dimensionen bietet.
+  \item \textbf{$k^2$-Gewichtung} stellt den besten Kompromiss dar;
+        $k^1$ unterschätzt die Beiträge schwerer Rückstreuer,
+        $k^3$ verstärkt das Hochfrequenzrauschen.
+  \item \textbf{Mehrfachstreuung} ($N_{\text{legs}} = 4$) verbessert
+        den Fit gegenüber reiner Einfachstreuung ($N_{\text{legs}} = 2$)
+        signifikant.
+  \item Der Einfluss von $k_{\min}$ (\num{2} vs.\ \num{3}) ist gering;
+        $k_{\min} = 3$ wird bevorzugt, da der Bereich $k < 3$ stärker
+        durch Hintergrundartefakte kontaminiert ist.
+  \item In der zweiten Phase zeigt sich, dass größere Schrittweiten
+        (\SI{0.005}{\Angstrom}) und ein Clusterradius von \SI{6}{\Angstrom}
+        die besten Ergebnisse liefern.
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Probe~1: CoNiCu-Mittelentropielegierung}
+\label{sec:probe1}
+
+\subsection{Messbedingungen}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Messbedingungen und Datenbereich der MEA-Probe.}
+  \label{tab:probe1-bedingungen}
+  \small
+  \begin{tabular}{lll}
+    \toprule
+    & \textbf{Wert} & \textbf{Anmerkung} \\
+    \midrule
+    Probe          & \TODO{CoNiCu MEA} & \TODO{Probenbeschreibung} \\
+    Kanten         & Co-K, Ni-K, Cu-K & Simultane Messung \\
+    Energiebereich & \SIrange{7500}{10000}{\electronvolt} & \\
+    $k$-Bereich    & \SIrange{3}{11.5}{\per\Angstrom} & Alle drei Kanten \\
+    \TODO{Temperatur} & \TODO{RT / \SI{300}{\kelvin}} & \\
+    \TODO{Messgeometrie} & \TODO{Transmission / Fluoreszenz} & \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Strukturvergleich: FCC vs.\ BCC vs.\ HCP}
+
+Tabelle~\ref{tab:struct-comparison} vergleicht die Fitresiduen der
+drei Ausgangsstrukturen.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Kantenaufgelöste und gewichtete Gesamtresiduen für
+    verschiedene Ausgangsstrukturen der MEA-Probe.
+    Der niedrigste Gesamtresidual ist hervorgehoben.}
+  \label{tab:struct-comparison}
+  \small
+  \begin{tabular}{lccccccc}
+    \toprule
+    \textbf{Struktur} &
+    $R_{\text{Co}}$ & $R_{\text{Ni}}$ & $R_{\text{Cu}}$ &
+    $R_{\text{total}}$ &
+    $S_0^2$(Co) & $S_0^2$(Ni) & $S_0^2$(Cu) \\
+    \midrule
+    FCC & \TODO{0.000} & \TODO{0.000} & \TODO{0.000} & \TODO{\textbf{0.000}} &
+          \TODO{0.00} & \TODO{0.00} & \TODO{0.00} \\
+    BCC & \TODO{0.000} & \TODO{0.000} & \TODO{0.000} & \TODO{0.000} &
+          \TODO{0.00} & \TODO{0.00} & \TODO{0.00} \\
+    HCP & \TODO{0.000} & \TODO{0.000} & \TODO{0.000} & \TODO{0.000} &
+          \TODO{0.00} & \TODO{0.00} & \TODO{0.00} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\TODO{Interpretation einfügen: Welche Struktur liefert den besten Fit?
+Ist das Ergebnis konsistent mit der Literatur (FCC erwartet für CoNiCu)?
+Wie groß ist der Unterschied?}
+
+Abbildung~\ref{fig:struct-comparison} zeigt den direkten Vergleich der
+EXAFS-Spektren und Fouriertransformierten aller drei Strukturen.
+
+\begin{figure}[htbp]
+  \centering
+  \TODO{Hier fig10\_structure\_comparison.png einfügen.}
+  %\includegraphics[width=\textwidth]{fig10_structure_comparison.png}
+  \caption{Strukturvergleich der MEA-Probe.
+    (a)~Residuen nach Kante und Struktur.
+    (b)--(d)~$\chi(k)\cdot k^2$ für Co, Ni, Cu mit experimentellen
+    Daten (schwarz) und Fits aus FCC (grün), BCC (blau), HCP (rot).
+    (e)--(g)~Zugehörige Fouriertransformierte.
+    (h)~Tabellarische Zusammenfassung der Fitparameter.}
+  \label{fig:struct-comparison}
+\end{figure}
+
+\subsection{Konvergenz}
+
+\begin{figure}[htbp]
+  \centering
+  \TODO{Hier Konvergenzplots einfügen (struct\_fcc\_convergence.png etc.).}
+  %\includegraphics[width=0.7\textwidth]{struct_fcc_convergence.png}
+  \caption{Konvergenzverlauf des Gesamtresiduals für den FCC-Fit der
+    MEA-Probe.}
+  \label{fig:convergence-mea}
+\end{figure}
+
+\TODO{Beschreibung des Konvergenzverhaltens: Ab welcher Iteration
+stagniert der Residual? Wie vergleichen sich die drei Strukturen?}
+
+\subsection{EXAFS-Fit und Fouriertransformation}
+
+\begin{figure}[htbp]
+  \centering
+  \TODO{Hier struct\_fcc\_exafs\_ft.png einfügen.}
+  %\includegraphics[width=\textwidth]{struct_fcc_exafs_ft.png}
+  \caption{EXAFS-Fit der MEA-Probe (FCC-Struktur).
+    Obere Reihe: $\chi(k)\cdot k^2$ (berechnet vs.\ experimentell)
+    für Co, Ni und Cu.
+    Untere Reihe: Zugehörige Fouriertransformierte.
+    Der grau hinterlegte Bereich ($k < \SI{3}{\per\Angstrom}$) wurde
+    vom Fit ausgeschlossen.}
+  \label{fig:exafs-ft-mea}
+\end{figure}
+
+\TODO{Qualitative Beschreibung: Wo stimmt der Fit gut überein? Gibt es
+systematische Abweichungen? Welche Kante zeigt den höchsten Residual
+und warum (z.\,B.\ geringeres Signal-zu-Rausch-Verhältnis bei Cu)?}
+
+\subsection{Radiale Verteilungsfunktionen}
+
+\begin{figure}[htbp]
+  \centering
+  \TODO{Hier struct\_fcc\_rdf.png einfügen.}
+  %\includegraphics[width=\textwidth]{struct_fcc_rdf.png}
+  \caption{Partielle radiale Verteilungsfunktionen $g_{ij}(R)$ der
+    MEA-Probe für die drei Absorbertypen.
+    Jedes Panel zeigt die Beiträge der drei Nachbarelemente.}
+  \label{fig:rdf-mea}
+\end{figure}
+
+\TODO{Beschreibung der RDF-Peaks: Position des ersten Peaks
+(Nächste-Nachbar-Abstand), Breite (Unordnung), relative Höhe
+(Koordinationszahl).}
+
+\subsection{Koordinationszahlen und Bindungslängen}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Aus der \evax{}-Analyse bestimmte Koordinationszahlen und
+    mittlere Bindungslängen der MEA-Probe (erste Koordinationsschale).
+    \TODO{Werte nach Abschluss der Fits einfügen.}}
+  \label{tab:cn-mea}
+  \small
+  \begin{tabular}{lSSS}
+    \toprule
+    \textbf{Paar} &
+    {$N_{ij}$} &
+    {$\langle R_{ij}\rangle$ (\si{\Angstrom})} &
+    {$\sigma_{ij}$ (\si{\Angstrom})} \\
+    \midrule
+    Co--Co & \TODO{0.0} & \TODO{0.00} & \TODO{0.00} \\
+    Co--Ni & \TODO{0.0} & \TODO{0.00} & \TODO{0.00} \\
+    Co--Cu & \TODO{0.0} & \TODO{0.00} & \TODO{0.00} \\
+    \midrule
+    Ni--Co & \TODO{0.0} & \TODO{0.00} & \TODO{0.00} \\
+    Ni--Ni & \TODO{0.0} & \TODO{0.00} & \TODO{0.00} \\
+    Ni--Cu & \TODO{0.0} & \TODO{0.00} & \TODO{0.00} \\
+    \midrule
+    Cu--Co & \TODO{0.0} & \TODO{0.00} & \TODO{0.00} \\
+    Cu--Ni & \TODO{0.0} & \TODO{0.00} & \TODO{0.00} \\
+    Cu--Cu & \TODO{0.0} & \TODO{0.00} & \TODO{0.00} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\TODO{Interpretation: Stimmen die Gesamtkoordinationszahlen
+($\sum_j N_{ij} \approx 12$ für FCC)? Sind die Bindungslängen
+konsistent mit dem Vegard'schen Gesetz?}
+
+\subsection{Chemische Nahordnung}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Warren-Cowley-Parameter $\alpha_{ij}$ der ersten
+    Koordinationsschale der MEA-Probe.
+    Negative Werte zeigen Paarbildungstendenz an, positive Werte
+    Vermeidung.}
+  \label{tab:sro-mea}
+  \small
+  \begin{tabular}{lccc}
+    \toprule
+    & Co & Ni & Cu \\
+    \midrule
+    Co & \TODO{$+0.00$} & \TODO{$-0.00$} & \TODO{$\phantom{+}0.00$} \\
+    Ni & \TODO{$-0.00$} & \TODO{$+0.00$} & \TODO{$\phantom{+}0.00$} \\
+    Cu & \TODO{$\phantom{+}0.00$} & \TODO{$\phantom{+}0.00$} & \TODO{$+0.00$} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\TODO{Interpretation: Welche Paare werden bevorzugt/vermieden? Ist die
+Legierung ein idealer Mischkristall ($\alpha \approx 0$) oder gibt es
+lokale Ordnung? Stimmen die Ergebnisse mit DFT-Vorhersagen oder
+anderen experimentellen Befunden überein?}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Probe~2: CoPt-Nanopartikel}
+\label{sec:probe2}
+
+\subsection{Messbedingungen}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Messbedingungen und Datenbereich der CoPt-Probe.}
+  \label{tab:probe2-bedingungen}
+  \small
+  \begin{tabular}{lll}
+    \toprule
+    & \textbf{Wert} & \textbf{Anmerkung} \\
+    \midrule
+    Probe          & \TODO{CoPt-Nanopartikel} & \TODO{Beschreibung} \\
+    Kanten         & \TODO{Co-K, Pt-L$_3$} & \\
+    Energiebereich & \TODO{...} & \\
+    $k$-Bereich    & \TODO{...} & \\
+    \TODO{Temperatur} & \TODO{...} & \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Strukturvergleich}
+
+\TODO{Analog zur MEA-Probe werden hier FCC, BCC und ggf.\ L1$_0$
+verglichen. Für CoPt-Nanopartikel ist die Frage besonders relevant,
+ob eine geordnete Phase (L1$_0$) vorliegt oder eine statistische
+Verteilung auf dem FCC-Gitter.}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Strukturvergleich der CoPt-Probe.}
+  \label{tab:struct-comparison-copt}
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Struktur} &
+    $R_{\text{Co}}$ & $R_{\text{Pt}}$ & $R_{\text{total}}$ &
+    $S_0^2$(Co) \\
+    \midrule
+    FCC  & \TODO{0.000} & \TODO{0.000} & \TODO{0.000} & \TODO{0.00} \\
+    L1$_0$ & \TODO{0.000} & \TODO{0.000} & \TODO{0.000} & \TODO{0.00} \\
+    \TODO{...} & & & & \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{EXAFS-Fit und Fouriertransformation}
+
+\begin{figure}[htbp]
+  \centering
+  \TODO{EXAFS- und FT-Plots der CoPt-Probe einfügen.}
+  \caption{EXAFS-Fit der CoPt-Probe.
+    \TODO{Analoges Layout wie Abb.~\ref{fig:exafs-ft-mea}.}}
+  \label{fig:exafs-ft-copt}
+\end{figure}
+
+\subsection{Koordinationszahlen und Bindungslängen}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Koordinationszahlen und Bindungslängen der CoPt-Probe.}
+  \label{tab:cn-copt}
+  \small
+  \begin{tabular}{lSSS}
+    \toprule
+    \textbf{Paar} &
+    {$N_{ij}$} &
+    {$\langle R_{ij}\rangle$ (\si{\Angstrom})} &
+    {$\sigma_{ij}$ (\si{\Angstrom})} \\
+    \midrule
+    Co--Co & \TODO{0.0} & \TODO{0.00} & \TODO{0.00} \\
+    Co--Pt & \TODO{0.0} & \TODO{0.00} & \TODO{0.00} \\
+    Pt--Co & \TODO{0.0} & \TODO{0.00} & \TODO{0.00} \\
+    Pt--Pt & \TODO{0.0} & \TODO{0.00} & \TODO{0.00} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Chemische Nahordnung}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Warren-Cowley-Parameter der CoPt-Probe.}
+  \label{tab:sro-copt}
+  \small
+  \begin{tabular}{lcc}
+    \toprule
+    & Co & Pt \\
+    \midrule
+    Co & \TODO{$+0.00$} & \TODO{$-0.00$} \\
+    Pt & \TODO{$-0.00$} & \TODO{$+0.00$} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\TODO{Interpretation: Deutet der SRO-Parameter auf L1$_0$-Ordnung hin
+($\alpha_{\text{Co-Pt}} < 0$, $\alpha_{\text{Co-Co}} > 0$)?
+Oder handelt es sich um eine statistische Legierung?}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Vergleich beider Proben}
+\label{sec:vergleich}
+
+\TODO{Dieser Abschnitt soll die Ergebnisse beider Proben
+gegenüberstellen. Mögliche Vergleichsaspekte:}
+
+\begin{itemize}[nosep]
+  \item Grad der chemischen Nahordnung ($\alpha$-Parameter) in beiden
+        Systemen,
+  \item Fitqualität in Abhängigkeit von der Anzahl der Komponenten
+        (ternär vs.\ binär),
+  \item Lokale Verzerrung (Streuung der Bindungslängen) als Maß für
+        den Gitterverspannungseffekt,
+  \item Robustheit der Ergebnisse gegenüber der Wahl der
+        Ausgangsstruktur.
+\end{itemize}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Zusammenfassender Vergleich der beiden Probensysteme.}
+  \label{tab:vergleich}
+  \small
+  \begin{tabularx}{\textwidth}{lXX}
+    \toprule
+    & \textbf{CoNiCu MEA} & \textbf{CoPt NP} \\
+    \midrule
+    Kristallstruktur  & \TODO{FCC}  & \TODO{FCC / L1$_0$} \\
+    Gesamtresidual    & \TODO{0.000} & \TODO{0.000} \\
+    Nächster-Nachbar-Abstand & \TODO{\SI{0.00}{\Angstrom}} &
+                               \TODO{\SI{0.00}{\Angstrom}} \\
+    Gesamt-KZ (1.~Schale) & \TODO{$\approx 12$} & \TODO{$\approx 12$} \\
+    Stärkster SRO-Effekt  & \TODO{Co-Ni bevorzugt} &
+                             \TODO{Co-Pt bevorzugt} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}

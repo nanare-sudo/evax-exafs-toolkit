@@ -1,0 +1,93 @@
+% Standalone TikZ figure: XAS measurement principle
+% Can be compiled separately or included via \input
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[
+    scale=0.9,
+    atom/.style={circle, draw, fill=blue!20, minimum size=0.5cm,
+                 inner sep=0pt, font=\tiny},
+    absorber/.style={circle, draw, fill=red!40, minimum size=0.6cm,
+                     inner sep=0pt, font=\tiny\bfseries},
+    photon/.style={-{Stealth}, decorate,
+                   decoration={snake, amplitude=1.5pt, segment length=6pt},
+                   thick, red!70!black},
+    electron/.style={-{Stealth}, thick, blue!70!black, dashed},
+    scattered/.style={-{Stealth}, thick, green!50!black, dashed},
+  ]
+    % X-ray beam
+    \draw[photon] (-3, 0) -- (-0.5, 0)
+      node[midway, above=4pt, font=\small, text=red!70!black] {$h\nu$};
+
+    % Absorber atom
+    \node[absorber] (abs) at (0,0) {A};
+
+    % Neighbor atoms
+    \node[atom] (n1) at (2.2, 0.8) {N};
+    \node[atom] (n2) at (2.0, -1.0) {N};
+    \node[atom] (n3) at (-1.0, 2.0) {N};
+    \node[atom] (n4) at (1.5, 2.2) {N};
+
+    % Photoelectron wave (outgoing)
+    \draw[electron] (abs.east) -- (n1.west)
+      node[midway, above, font=\scriptsize] {$e^-$};
+    \draw[electron] (abs.east) -- (n2.north west);
+
+    % Scattered wave (returning)
+    \draw[scattered] (n1.south west) -- (abs.north east);
+    \draw[scattered] (n2.north) -- (abs.south east);
+
+    % Interference annotation
+    \draw[<->, thick, gray] (0, -2) -- (2.2, -2)
+      node[midway, below, font=\small] {$R_j$};
+
+    % Labels
+    \node[font=\small, text=red!70!black, below left] at (-0.3, -0.5)
+      {Absorber};
+    \node[font=\small, text=blue!70!black, right] at (2.5, 0.8)
+      {Nachbar};
+
+    % Right side: schematic spectrum
+    \begin{scope}[xshift=7cm, yshift=-0.5cm]
+      \draw[->, thick] (0, 0) -- (4.5, 0)
+        node[right, font=\small] {$E$};
+      \draw[->, thick] (0, 0) -- (0, 3.5)
+        node[above, font=\small] {$\mu(E)$};
+
+      % Pre-edge
+      \draw[thick, blue!60!black] (0.2, 0.5) -- (1.2, 0.6);
+
+      % Edge jump
+      \draw[thick, blue!60!black] (1.2, 0.6) -- (1.4, 2.5);
+
+      % EXAFS oscillations
+      \draw[thick, blue!60!black]
+        (1.4, 2.5) .. controls (1.7, 2.8) and (1.9, 2.2) ..
+        (2.1, 2.5) .. controls (2.3, 2.8) and (2.5, 2.3) ..
+        (2.7, 2.5) .. controls (2.9, 2.7) and (3.1, 2.4) ..
+        (3.3, 2.5) .. controls (3.5, 2.6) and (3.7, 2.45) ..
+        (4.0, 2.5);
+
+      % Annotations
+      \draw[<->, gray, thick] (1.15, 0.6) -- (1.15, 2.5)
+        node[midway, left, font=\scriptsize] {$\Delta\mu_0$};
+      \node[font=\scriptsize] at (1.3, 0.2) {$E_0$};
+      \draw[gray, dashed] (1.3, 0) -- (1.3, 0.6);
+
+      \draw[decorate, decoration={brace, amplitude=4pt}]
+        (1.5, 3.2) -- (4.0, 3.2)
+        node[midway, above=4pt, font=\scriptsize] {EXAFS};
+
+      \draw[decorate, decoration={brace, amplitude=4pt}]
+        (1.1, 3.2) -- (1.5, 3.2)
+        node[midway, above=4pt, font=\scriptsize] {XANES};
+    \end{scope}
+  \end{tikzpicture}
+  \caption{Prinzip der Röntgenabsorptionsspektroskopie.
+    Links: Das einfallende Photon erzeugt am Absorberatom (A) ein
+    Photoelektron, das an den Nachbaratomen (N) gestreut wird.
+    Die Interferenz zwischen ausgehender und rückgestreuter Welle
+    moduliert den Absorptionskoeffizienten.
+    Rechts: Schematisches Absorptionsspektrum $\mu(E)$ mit
+    Kantensprung $\Delta\mu_0$, XANES- und EXAFS-Bereich.}
+  \label{fig:xas-principle}
+\end{figure}

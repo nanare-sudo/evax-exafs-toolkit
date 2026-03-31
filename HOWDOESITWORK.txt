@@ -1,0 +1,46 @@
+Wie EvAX/RMC funktioniert — Schritt für Schritt
+Das Grundproblem
+Du hast EXAFS-Spektren von einer Legierung (CoNiCu) gemessen. Ein EXAFS-Spektrum enthält Information über die lokale atomare Umgebung um einen bestimmten Absorbertyp herum — Abstände zu Nachbarn, welche Elemente das sind, wie viele davon, und wie stark sie "wackeln" (Unordnung).
+
+Das Problem: Bei einer ternären Legierung wie CoNiCu gibt es 9 verschiedene Nachbar-Paare (Co-Co, Co-Ni, Co-Cu, Ni-Co, Ni-Ni, Ni-Cu, etc.). Ein normaler EXAFS-Fit (wie in Artemis/Demeter) stößt da an seine Grenzen, weil zu viele Parameter zu wenigen Datenpunkten gegenüberstehen.
+
+Die RMC/EA-Lösung (Reverse Monte Carlo + Evolutionary Algorithm)
+EvAX dreht das Problem um:
+
+Startmodell erstellen: Wir bauen eine 3D-Superzelle (4×4×4 fcc, 256 Atome) und verteilen Co, Ni, Cu zufällig auf die Gitterplätze.
+
+EXAFS berechnen: Für jedes Co-Atom in der Box berechnet FEFF (ein ab-initio Code) das theoretische EXAFS-Signal. Genauso für jedes Ni und Cu. Dann mittelt EvAX über alle Co-Atome → theoretisches Co-K-EXAFS. Das gleiche für Ni-K und Cu-K.
+
+Vergleich mit Experiment: Die berechneten Spektren werden mit den gemessenen verglichen. EvAX benutzt dafür den Wavelet-Raum (Space w) — das ist eine 2D-Darstellung, die sowohl k- als auch R-Information enthält, also mehr Constraint als nur FT oder chi(k) allein.
+
+Atome bewegen: EvAX verschiebt ein zufälliges Atom um einen kleinen Betrag (max. 0.003 Å pro Schritt) und prüft: Wird der Fit besser?
+
+Ja → Verschiebung akzeptieren
+Nein → Verschiebung mit einer gewissen Wahrscheinlichkeit trotzdem akzeptieren (wie bei Simulated Annealing), um aus lokalen Minima herauszukommen
+Evolutionärer Algorithmus: EvAX hält 16 parallele Strukturen (Number_of_states). Diese "konkurrieren" miteinander. Gute Strukturen werden bevorzugt, schlechte sterben aus. Das verhindert, dass der Algorithmus in einem lokalen Minimum stecken bleibt.
+
+"Froze_in": Nach 3000 Iterationen ohne Verbesserung wird die Struktur als konvergiert betrachtet und der Lauf endet.
+
+Was die Parameter bedeuten
+Parameter	Wert	Bedeutung
+S₀²	0.82	Amplituden-Reduktionsfaktor. Theoretisch = 1.0, aber Multi-Elektronen-Effekte reduzieren die echte EXAFS-Amplitude auf ~0.7–0.9. Beim ersten Lauf war S₀²=1.0 → Fit-Amplitude zu hoch → FT-Peaks zu klein
+dE₀	2.0 eV	Energieverschiebung zwischen der theoretischen und experimentellen Kantenlage. Verschiebt die Phase des EXAFS-Signals.
+k_min	3.0 Å⁻¹	Untere k-Grenze. Unter ~3 Å⁻¹ ist das Signal von Hintergrundeffekten kontaminiert
+k_max	12.0 Å⁻¹	Obere k-Grenze. Darüber ist das Signal zu verrauscht
+k_power	2	k-Gewichtung. χ(k)·k² betont mittlere k-Bereiche (Kompromiss zwischen leichten und schweren Streuer)
+Space w	Wavelet	Vergleich im Wavelet-Raum — empfindlicher als nur FT
+N_legs	4	Bis zu 4-beinige Streupfade (= Multiple Scattering). 2-beinig = einfache Rückstreuung, 3/4-beinig = Umwege über Zwischenatome
+Was wir aus den Ergebnissen lesen
+RDF (Radial Distribution Function): Zeigt für jeden Absorbertyp, wie viele Nachbarn welchen Typs bei welchem Abstand sitzen. Daraus berechnen wir Koordinationszahlen.
+
+Warren-Cowley α-Parameter: Misst die chemische Nahordnung.
+
+α = 0: Zufällige Verteilung (ideale Mischung)
+α > 0: Paar wird vermieden
+α < 0: Paar wird bevorzugt
+Unser erster Lauf zeigte: Co und Ni bevorzugen sich als Nachbarn (α ≈ -0.10), während Co-Co Paare vermieden werden (α ≈ +0.10).
+
+Was Run 02 besser macht
+Im ersten Lauf war S₀²=1.0 → die theoretische Amplitude war zu stark, deshalb musste der Fit die Atome zu weit streuen, um die Amplitude zu dämpfen. Ergebnis: schlechter Fit in der FT (Peaks viel zu klein).
+
+Jetzt mit S₀²=0.82 stimmt die Amplituden-Skala, und der Algorithmus kann sich auf die echte Strukturoptimierung konzentrieren statt Amplituden-Probleme zu kompensieren.

@@ -1,0 +1,184 @@
+% =============================================================================
+% Kapitel 4: Methodik der vorliegenden Arbeit
+% =============================================================================
+\chapter{Methodik}
+\label{ch:methodik}
+
+\section{Proben und Messdaten}
+
+Die Arbeit behandelt zwei Probensysteme, deren EXAFS-Daten im Rahmen
+der Vorlesung bereitgestellt wurden:
+
+\begin{description}[style=nextline]
+  \item[Probe~1: \TODO{CoNiCu}-Mittelentropielegierung (MEA)]
+    Eine äquimolare ternäre Legierung der 3d-Übergangsmetalle Cobalt,
+    Nickel und Kupfer.
+    Das Absorptionsspektrum wurde in einem einzigen Energiescan von
+    ca.\ \SIrange{7500}{10000}{\electronvolt} aufgenommen und deckt
+    damit die K-Kanten aller drei Elemente ab
+    (Co: \SI{7709}{\electronvolt}, Ni: \SI{8333}{\electronvolt},
+    Cu: \SI{8979}{\electronvolt}).
+  \item[Probe~2: \TODO{CoPt}-Nanopartikel]
+    Bimetallische Nanopartikel aus Cobalt und Platin.
+    \TODO{Hier werden nach Erhalt der Daten die Messbedingungen,
+    Kanten und Energiebereiche ergänzt.}
+\end{description}
+
+\section{Datenvorverarbeitung}
+\label{sec:datenvorverarbeitung}
+
+\subsection{$\chi(k)$-Extraktion}
+
+Die Umwandlung der Rohdaten $\mu(E)$ in $\chi(k)$ wurde mit der
+Python-Bibliothek \textsc{larch} \cite{Newville2013} durchgeführt.
+Die wesentlichen Schritte sind:
+
+\begin{enumerate}
+  \item \textbf{Kantenenergie $E_0$:} Bestimmung als Wendepunkt
+        der Absorptionskante.
+  \item \textbf{Pre-Edge-Subtraktion:} Anpassung einer linearen
+        Funktion im Bereich unterhalb der Kante und Abzug.
+  \item \textbf{Normierung:} Anpassung eines Polynoms im
+        Post-Edge-Bereich und Normierung auf den Kantensprung
+        $\Delta\mu_0 = 1$.
+  \item \textbf{Hintergrundentfernung:} Spline-Fit
+        (\texttt{autobk}-Algorithmus mit $R_{\text{bkg}} = \SI{1.0}{\Angstrom}$)
+        zur Bestimmung und Subtraktion des atomaren Hintergrunds
+        $\mu_0(E)$.
+\end{enumerate}
+
+\subsection{Besonderheit bei Multi-Edge-Messungen}
+
+Da bei der MEA-Probe alle drei Kanten in einem einzigen Scan vorliegen,
+wurde für jede Kante ein separates Energiefenster definiert, um eine
+Kontamination der Normierung durch die nächstfolgende Kante zu
+vermeiden:
+\begin{itemize}[nosep]
+  \item Co-K: bis \SI{8233}{\electronvolt} (ca.\ \SI{100}{\electronvolt}
+        vor der Ni-Kante),
+  \item Ni-K: \SIrange{8100}{8879}{\electronvolt},
+  \item Cu-K: ab \SI{8700}{\electronvolt}.
+\end{itemize}
+Die korrekte Normierung ist kritisch, da ein fehlerhafter Kantensprung
+$\Delta\mu_0$ die gesamte Amplitude von $\chi(k)$ skaliert und damit
+die effektiven Koordinationszahlen verfälscht.
+
+\section{Startstrukturen}
+
+Für die \evax{}-Analyse wurden dreidimensionale Superzellen mit
+jeweils 256~Atomen erzeugt.
+Die chemischen Elemente wurden stöchiometrisch korrekt und zufällig
+auf die Gitterplätze verteilt.
+
+Drei verschiedene Kristallstrukturen dienen als Startmodelle:
+\begin{itemize}[nosep]
+  \item \textbf{FCC} (kubisch-flächenzentriert): $4\times4\times4$
+        konventionelle Einheitszellen, Gitterparameter
+        $a = \SI{3.54}{\Angstrom}$, Superzellkante
+        $L = \SI{14.16}{\Angstrom}$.
+  \item \textbf{BCC} (kubisch-raumzentriert): $4\times4\times8$
+        Einheitszellen, $a = \SI{2.87}{\Angstrom}$.
+  \item \textbf{HCP} (hexagonal dichteste Packung):
+        $8\times4\times4$ Einheitszellen,
+        $a = \SI{2.51}{\Angstrom}$, $c = \SI{4.07}{\Angstrom}$.
+\end{itemize}
+Durch den Vergleich der finalen Residuen lässt sich bestimmen, welche
+Struktur die experimentellen Daten am besten beschreibt.
+
+\section{EvAX-Konfiguration}
+
+\subsection{Fit-Parameter}
+
+Die optimalen Fit-Parameter wurden durch eine systematische
+Parameterstudie (vgl.\ Abschnitt~\ref{sec:param-scan}) ermittelt.
+Tabelle~\ref{tab:fit-params} fasst die finalen Einstellungen zusammen.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Finale Fit-Parameter der \evax{}-Analyse.}
+  \label{tab:fit-params}
+  \small
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Parameter} & \textbf{Wert} \\
+    \midrule
+    $k$-Bereich        & \SIrange{3}{11.5}{\per\Angstrom} \\
+    $k$-Gewichtung     & $k^2$ \\
+    Vergleichsraum     & Wavelet (\texttt{Space = w}) \\
+    $N_{\text{legs}}$  & 4 (Mehrfachstreuung) \\
+    $R_{\text{max,FEFF}}$ & \SI{6}{\Angstrom} \\
+    Schrittweite       & \SI{0.005}{\Angstrom} \\
+    Max.\ Verschiebung & \SI{0.4}{\Angstrom} \\
+    Anzahl States      & 16 \\
+    Screening-Iterationen & 2000 \\
+    Froze-in           & 5000 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Automatische $S_0^2$- und $\Delta E_0$-Bestimmung}
+
+Die Parameter $S_0^2$ und $\Delta E_0$ wurden über die
+\texttt{-autoES}-Option von \evax{} automatisch bestimmt.
+\evax{} verwendet dafür eine Vorstufe, in der diese Werte für jede
+Kante separat optimiert werden, bevor die eigentliche
+Strukturoptimierung beginnt.
+Physikalisch sinnvolle Werte liegen bei $S_0^2 \approx 0{,}6$--$0{,}9$
+und $|\Delta E_0| \lesssim \SI{15}{\electronvolt}$.
+
+\section{Systematische Parameterstudie}
+\label{sec:param-scan}
+
+Um die Sensitivität der Ergebnisse gegenüber der Wahl der
+Fit-Parameter zu untersuchen, wurde eine automatisierte
+Parameterstudie durchgeführt.
+In einer ersten Phase wurden die Fit-Parameter $k_{\min}$,
+$k_{\max}$, $k^n$, der Vergleichsraum und $N_{\text{legs}}$
+systematisch variiert (insgesamt 72~Kombinationen).
+In einer zweiten Phase wurden die Optimierungsparameter
+(Schrittweite, maximale Verschiebung, $R_{\max}^{\text{FEFF}}$)
+mit den besten Fit-Parametern aus Phase~1 kombiniert
+(11~Kombinationen).
+
+Alle Läufe wurden parallelisiert (sechs gleichzeitige EvAX-Instanzen
+in isolierten Arbeitsverzeichnissen) und mit reduzierten
+Iterationszahlen (50~Screening-Iterationen, \texttt{Froze\_in}~=~50)
+durchgeführt, um die Rechenzeit auf ein praktikables Maß zu begrenzen.
+Die Ergebnisse dienen der Identifikation optimaler
+Parametereinstellungen und der Abschätzung der Parametersensitivität,
+nicht der finalen Strukturbestimmung.
+
+\section{Strukturvergleich}
+\label{sec:struct-compare}
+
+Für die Bestimmung der zugrunde liegenden Kristallstruktur werden
+Produktionsläufe mit den optimalen Parametern für jede der drei
+Ausgangsstrukturen (FCC, BCC, HCP) durchgeführt.
+Die Runs verwenden volle Konvergenzkriterien
+(2000~Screening-Iterationen, \texttt{Froze\_in}~=~5000) und werden
+anhand folgender Kriterien verglichen:
+
+\begin{enumerate}[nosep]
+  \item Gesamtresidual und kantenaufgelöste Einzelresiduen,
+  \item Übereinstimmung der berechneten und experimentellen
+        $\chi(k)$- und FT-Spektren,
+  \item Physikalische Plausibilität der resultierenden $S_0^2$-Werte,
+  \item Konsistenz der RDF-Peaks mit bekannten Bindungslängen.
+\end{enumerate}
+
+\section{Auswertung der Strukturergebnisse}
+
+Aus den finalen \evax{}-Strukturen werden folgende Größen berechnet:
+
+\begin{itemize}[nosep]
+  \item \textbf{Partielle RDF} $g_{ij}(R)$ für alle Elementpaare,
+  \item \textbf{Koordinationszahlen} $N_{ij}$ durch Integration des
+        ersten Peaks,
+  \item \textbf{Mittlere Bindungslängen} $\langle R_{ij}\rangle$ aus
+        der Peakposition,
+  \item \textbf{Warren-Cowley-Parameter} $\alpha_{ij}$
+        (Gl.~\eqref{eq:warren_cowley}).
+\end{itemize}
+
+Die Unsicherheiten werden aus der Streuung der Werte über die
+16~parallelen States abgeschätzt.

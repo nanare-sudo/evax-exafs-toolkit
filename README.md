@@ -10,8 +10,8 @@ Entwickelt im Rahmen des Kurses Experimentelle Roentgenphysik (ERP), Universitae
 
 ```bash
 # 1. Repo klonen
-git clone <repo-url>
-cd ERP_Hausarbeit
+git clone https://github.com/nanare-sudo/evax-exafs-toolkit.git
+cd evax-exafs-toolkit
 
 # 2. Abhaengigkeiten installieren
 pip install numpy matplotlib pyyaml
@@ -78,7 +78,7 @@ EvAX erwartet pro Absorptionskante eine **zweispaltige ASCII-Datei**:
 ...
 ```
 
-Diese Dateien legt ihr in `data/chi_extracted/` ab. Der Dateiname ist frei waehlbar,
+Die Dateien werden in `data/chi_extracted/` abgelegt. Der Dateiname ist frei waehlbar,
 muss aber in der YAML-Config angegeben werden.
 
 **Woher kommen die chi(k)-Dateien?**
@@ -262,15 +262,14 @@ Bindungslaengen und chemische Nahordnung (Warren-Cowley) ablesen kann.
 
 ### CoPt Nanopartikel (`configs/CoPt_nanoparticles.yaml`)
 - 2 Kanten: Co-K + Pt-L3
-- Pt hat L3-Kante (nicht K!), weil die Pt K-Kante bei ~78 keV liegt
-- TODO: Startstruktur und Auswertung noch nicht durchgefuehrt
+- Pt verwendet die L3-Kante (11564 eV), da die K-Kante bei ~78 keV fuer die meisten Beamlines zu hoch liegt
 
 ---
 
 ## Tipps
 
-- **Erster Lauf dauert lange?** Reduziere `Stop_after` und `Froze_in` auf 30
-  fuer einen schnellen Test ob alles funktioniert.
+- **Schneller Test**: `Stop_after` und `Froze_in` auf 30 setzen
+  (oder `--screening 30 --froze-in 30`), um die Konfiguration zu pruefen.
 - **Parameter veraendern**: Einfach in der YAML-Datei aendern und `run.py`
   neu starten. Kein Code aendern noetig.
 - **Parallele Laeufe**: `--parallel N` steuert wie viele EvAX-Instanzen
@@ -279,8 +278,8 @@ Bindungslaengen und chemische Nahordnung (Warren-Cowley) ablesen kann.
   `--plot` generiert Vergleichsplots.
 - **Lauf abbrechen**: Ctrl+C oder `kill <PID>`. Bereits fertige Teillaeufe
   bleiben erhalten (werden beim naechsten Start uebersprungen).
-- **Altes Skript nutzen**: Die originalen Skripte in `scripts/` (parameter_scan.py,
-  structure_comparison.py, etc.) funktionieren weiterhin unabhaengig.
+- **Einzelskripte**: Die Skripte in `scripts/` koennen auch unabhaengig von
+  `run.py` als Referenz oder fuer eigene Anpassungen genutzt werden.
 
 ---
 

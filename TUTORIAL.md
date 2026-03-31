@@ -46,7 +46,7 @@ chmod +x feff85exafs/legacy/mod/MONO/feff85L
 
 ## Teil 1: Bestehende Probe analysieren (MEA CoNiCu)
 
-Die MEA-Probe ist komplett vorkonfiguriert. Damit kannst du sofort loslegen.
+Die MEA-Probe ist komplett vorkonfiguriert und eignet sich als Einstieg.
 
 ### 1.1 Trockenlauf — pruefen ob alles stimmt
 
@@ -72,7 +72,7 @@ pruefe die Pfade in `configs/MEA_CoNiCu.yaml`.
 
 ### 1.2 Parameterscan starten
 
-Der Parameterscan testet systematisch verschiedene Einstellungen und zeigt dir,
+Der Parameterscan testet systematisch verschiedene Einstellungen und zeigt,
 welche Kombination den besten Fit liefert.
 
 ```bash
@@ -90,7 +90,7 @@ python run.py configs/MEA_CoNiCu.yaml --parameter-scan
 - Bis zu 4 Instanzen laufen parallel
 
 **Tipp:** Fuer einen schnelleren ersten Test mit weniger Kombinationen
-kannst du in der YAML-Config die Listen kuerzen:
+lassen sich in der YAML-Config die Listen kuerzen:
 ```yaml
 parameter_scan:
   phase1:
@@ -113,7 +113,7 @@ Der beste Run steht oben.
 
 ### 1.4 Strukturvergleich
 
-Jetzt wollen wir wissen: Ist die Probe FCC, BCC oder HCP?
+Um die Kristallstruktur der Probe zu bestimmen (FCC, BCC oder HCP):
 
 ```bash
 python run.py configs/MEA_CoNiCu.yaml --structure-compare
@@ -136,7 +136,7 @@ python run.py configs/MEA_CoNiCu.yaml --structure-compare --plot
 
 ### 1.5 Ergebnisse interpretieren
 
-Nach einem erfolgreichen Lauf findest du in `output/MEA_CoNiCu/` folgendes:
+Nach einem erfolgreichen Lauf befinden sich in `output/MEA_CoNiCu/` folgende Dateien:
 
 | Datei | Was drin ist |
 |-------|-------------|
@@ -145,7 +145,7 @@ Nach einem erfolgreichen Lauf findest du in `output/MEA_CoNiCu/` folgendes:
 | `Co/RDF_Co_Ni.dat` | Radiale Verteilungsfunktion Co-Ni |
 | `final.xyz` | Optimierte 3D-Atomstruktur |
 
-**Wichtige Fragen die du beantworten kannst:**
+**Physikalische Groessen, die sich ableiten lassen:**
 - **Kristallstruktur?** → Struktur mit niedrigstem Residual
 - **Koordinationszahlen?** → Aus den RDF-Dateien (Integration des 1. Peaks)
 - **Bindungslaengen?** → Peak-Position in der RDF
@@ -161,7 +161,7 @@ Nach einem erfolgreichen Lauf findest du in `output/MEA_CoNiCu/` folgendes:
 cp configs/MEA_CoNiCu.yaml configs/MeineProbe.yaml
 ```
 
-Oeffne `configs/MeineProbe.yaml` und passe an:
+Die neue Datei oeffnen und folgende Felder anpassen:
 
 #### Probenname und Beschreibung
 ```yaml
@@ -171,7 +171,6 @@ description: "Kurze Beschreibung"
 
 #### Elemente und Kanten
 ```yaml
-# Welche Elemente hat deine Probe?
 edges: [Fe, Co]
 edge_types: [K, K]
 ```
@@ -209,7 +208,7 @@ cp /pfad/zu/meinen/chi-dateien/*.dat data/chi_extracted/
 structure_file: structures/MeineProbe.p1
 ```
 
-Erstelle eine POSCAR-Datei oder nutze `scripts/generate_structures.py` als Vorlage.
+POSCAR-Datei erstellen oder `scripts/generate_structures.py` als Vorlage verwenden.
 Die wichtigsten Punkte:
 - **~256 Atome** (guter Kompromiss zwischen Genauigkeit und Rechenzeit)
 - **Richtige Stoechometrie** (z.B. 128 Fe + 128 Co fuer 50/50)
@@ -256,7 +255,7 @@ Froze_in=500     |    Froze_in=500
 ```
 
 Es gibt einen Trade-off: Genauere Einstellungen dauern laenger.
-Der Parameterscan hilft dir, die optimale Kombination zu finden.
+Der Parameterscan hilft, die optimale Kombination zu finden.
 
 ### Typische Probleme und Loesungen
 
@@ -327,7 +326,7 @@ R_max_for_FEFF: [4, 4, 4]
 
 **Kann ich den Lauf abbrechen und spaeter fortsetzen?**
 Ja, Ctrl+C bricht ab. Bereits fertige Teil-Runs werden beim naechsten Start
-uebersprungen (skip). Du verlierst nur den gerade laufenden Run.
+uebersprungen. Nur der gerade laufende Run geht verloren.
 
 **Wie viel RAM braucht ein Lauf?**
 Ca. 200-500 MB pro EvAX-Instanz. Bei 4 parallelen Instanzen also ~2 GB.
@@ -341,6 +340,8 @@ EvAX optimiert automatisch S0² (Amplitudenfaktor) und dE0 (Energieverschiebung)
 pro Kante, bevor die eigentliche Strukturoptimierung beginnt.
 Das ist fast immer die richtige Wahl.
 
-**Muss ich die alten Skripte (parameter_scan.py etc.) noch nutzen?**
-Nein, `run.py` ersetzt sie. Die alten Skripte bleiben als Referenz im Repo,
-funktionieren aber nur mit hardcodierten Pfaden fuer die MEA-Probe.
+**Was machen die Skripte in `scripts/` einzeln?**
+`scripts/evax_engine.py` ist die zentrale Engine, die von `run.py` aufgerufen wird.
+Die uebrigen Skripte (`parameter_scan.py`, `structure_comparison.py`, etc.) sind
+eigenstaendige Implementierungen fuer spezifische Aufgaben und koennen als
+Referenz fuer eigene Anpassungen dienen.

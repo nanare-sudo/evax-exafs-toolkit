@@ -9,9 +9,9 @@ feff85exafs/
 feff
 feff85L
 
-# --- Experimental data (each user brings their own) ---
+# --- Experimental data ---
 data/athena_projects/
-data/chi_extracted/*.dat
+# chi(k) files are tracked (small ASCII, needed for reproducibility)
 
 # --- EvAX working directories & outputs ---
 MEA_analysis/output_files*/

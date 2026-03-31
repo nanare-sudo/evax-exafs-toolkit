@@ -79,41 +79,107 @@ def _find_template(cfg):
 
 
 def _generate_parameters_dat(cfg):
-    """Generate a fresh parameters.dat from config (no template needed)."""
+    """Generate a complete parameters.dat from config (no template needed)."""
     base = cfg['_base_dir']
     n = len(cfg['edges'])
     p = cfg['parameters']
+    fp = _format_param
 
-    # Build the file content
-    lines = []
-    lines.append(f"              Title                              {cfg['name']}")
-    lines.append(f"              File_with_structure                {cfg['structure_file']}")
-    lines.append(f"              Supercell                          1x1x1")
-    lines.append(f"              Initial_displacement               {p.get('Initial_displacement', 0.01)}")
-    lines.append(f"              Number_of_spectra                  {n}")
+    chi_paths = ' '.join(cfg['chi_files'][e] for e in cfg['edges'])
 
-    for i, edge in enumerate(cfg['edges']):
-        chi_path = cfg['chi_files'][edge]
-        lines.append(f"              File_with_{edge}_EXAFS_signal      {chi_path}")
-
-    lines.append(f"              Edge                               {' '.join(cfg['edges'])}")
-    lines.append(f"              Edge_type                          {' '.join(cfg['edge_types'])}")
-    lines.append(f"              S02                                {_format_param(1, n)}")
-    lines.append(f"              dE0                                {_format_param(0, n)}")
-    lines.append(f"              FEFF_path                          feff")
-    lines.append(f"              N_legs                             {_format_param(p['N_legs'], n)}")
-    lines.append(f"              R_max_for_FEFF                     {_format_param(p['R_max_for_FEFF'], n)}")
-    lines.append(f"              k_min                              {_format_param(p['k_min'], n)}")
-    lines.append(f"              k_max                              {_format_param(p['k_max'], n)}")
-    lines.append(f"              k_power                            {_format_param(p['k_power'], n)}")
-    lines.append(f"              Space                              {p['Space']}")
-    lines.append(f"              Stop_after                         {p['Stop_after']}")
-    lines.append(f"              Froze_in                           {p['Froze_in']}")
-    lines.append(f"              Maximal_step_length                {p['Maximal_step_length']}")
-    lines.append(f"              Maximal_displacement               {p['Maximal_displacement']}")
-    lines.append(f"              Number_of_states                   {p.get('Number_of_states', 16)}")
-    lines.append(f"              Total_iterations:                  0")
-    lines.append(f"              Residuals:")
+    lines = [
+        'BEGIN',
+        f"              Title                              {cfg['name']}",
+        '###############################################################################',
+        '########################## STRUCTURE_MODEL_DEFINITION #########################',
+        '###############################################################################',
+        '              Number_of_structures                   1',
+        '              Scale_coordinates_by                   1',
+        f"              Initial_displacement                   {p.get('Initial_displacement', 0.01)}",
+        '              Weight                                 1',
+        '              Doping_level                           -1',
+        f"              File_with_structure                    {cfg['structure_file']}",
+        '              Supercell                              1x1x1',
+        '              Doping                                 none',
+        '              pbc                                    1',
+        '              labels_to_element_name                 1',
+        '###############################################################################',
+        '######################### STRUCTURE_MODEL_OPTIMIZATION ########################',
+        '###############################################################################',
+        f"              Froze_in                               {p['Froze_in']}",
+        f"              Stop_after                             {p['Stop_after']}",
+        f"              Number_of_states                       {p.get('Number_of_states', 16)}",
+        f"              Maximal_step_length                    {p['Maximal_step_length']}",
+        '              Weight_increment                       0.0001',
+        '              Acceptance_rate                        0.8',
+        '              Energy_weight                          -1',
+        '              Move_type                              move_all',
+        '              MT_seed                                291 564 837 1110',
+        '              adjust_acceptance                      1',
+        '              adjust_weights                         0',
+        f"              Maximal_displacement                   {p['Maximal_displacement']}",
+        '              Potential_type                         box',
+        '###############################################################################',
+        '############################### EXPERIMENTAL_DATA #############################',
+        '###############################################################################',
+        f"              Number_of_spectra                      {n}",
+        f"              Columns_in_input                       {fp(2, n)}",
+        f"              Column_for_k                           {fp(1, n)}",
+        f"              Column_for_chi                         {fp(2, n)}",
+        f"              S02                                    {fp(1, n)}",
+        f"              dE0                                    {fp(0, n)}",
+        f"              k_power_in_IO                          {fp(0, n)}",
+        f"              Spectrum_weight                        {fp(1, n)}",
+        f"              File_with_experimental_EXAFS_signal    {chi_paths}",
+        '              adjust_spectra_weights                 1',
+        '###############################################################################',
+        '############################### THEORETICAL_DATA ##############################',
+        '###############################################################################',
+        '              Update_basis_every_...                 2',
+        '              Maximal_number_of_clusters             10000',
+        '              Expansion_accuracy                     -1',
+        '              FEFF_path                              feff',
+        f"              N_legs                                 {fp(p['N_legs'], n)}",
+        f"              R_max_for_FEFF                         {fp(p['R_max_for_FEFF'], n)}",
+        f"              FEFF_criteria                          {fp(1, n)}",
+        f"              Pathfinder_robustness                  {fp(0.5, n)}",
+        f"              Clustering_precision                   {fp(0.001, n)}",
+        f"              Edge                                   {' '.join(cfg['edges'])}",
+        f"              Edge_type                              {' '.join(cfg['edge_types'])}",
+        f"              Polarization                           {' '.join(['none'] * n)}",
+        f"              r_scf                                  {fp(4.3356, n)}",
+        f"              ca                                     {fp(0.1, n)}",
+        f"              n_scf                                  {fp(30, n)}",
+        f"              n_mix                                  {fp(1, n)}",
+        '###############################################################################',
+        '####################### THEORY_AND_EXPERIMENT_COMPARISON ######################',
+        '###############################################################################',
+        f"              Space                                  {p['Space']}",
+        f"              WT_type                                {fp(1, n)}",
+        f"              k_min                                  {fp(p['k_min'], n)}",
+        f"              k_max                                  {fp(p['k_max'], n)}",
+        f"              dk                                     {fp(0.05, n)}",
+        f"              k_power                                {fp(p['k_power'], n)}",
+        f"              FT_window_type                         {fp(1, n)}",
+        f"              R_min                                  {fp(0.5, n)}",
+        f"              R_max                                  {fp(5, n)}",
+        f"              R_max_for_1st_shell                    {fp(3, n)}",
+        f"              R0_for_WT                              {fp(2.75, n)}",
+        '###############################################################################',
+        '#################################### OUTPUT ###################################',
+        '###############################################################################',
+        f"              File_for_calculated_EXAFS_signal       {' '.join(f'output_files/{e}/EXAFS.dat' for e in cfg['edges'])}",
+        f"              File_for_FT                            {' '.join(f'output_files/{e}/expFT.dat' for e in cfg['edges'])}",
+        f"              File_for_BFT                           {' '.join(f'output_files/{e}/expBFT.dat' for e in cfg['edges'])}",
+        f"              File_for_WT                            {' '.join(f'output_files/{e}/expWT.dat' for e in cfg['edges'])}",
+        f"              File_for_interpolated_EXAFS_signal     {' '.join(f'output_files/{e}/ipolEXAFS.dat' for e in cfg['edges'])}",
+        '              Convergence                            output_files/output.dat',
+        '              xyz_file                                output_files/final.xyz',
+        '              Save_state                             output_files/restart',
+        '              Save_state_every                       200',
+        '              Total_iterations:                         0',
+        '              Residuals:',
+    ]
 
     template_path = base / 'templates' / 'generated_parameters.dat'
     template_path.parent.mkdir(parents=True, exist_ok=True)

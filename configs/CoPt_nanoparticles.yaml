@@ -2,8 +2,9 @@
 # Proben-Konfiguration: CoPt Nanopartikel
 # ============================================================
 # Ausfuehrung:
-#   python run.py configs/CoPt_nanoparticles.yaml
-#   python run.py configs/CoPt_nanoparticles.yaml --parameter-scan
+#   python run.py configs/CoPt_nanoparticles.yaml                     # Einzellauf
+#   python run.py configs/CoPt_nanoparticles.yaml --parameter-scan    # Parameterstudie
+#   python run.py configs/CoPt_nanoparticles.yaml --structure-compare # Strukturvergleich
 # ============================================================
 
 name: CoPt_nanoparticles
@@ -20,45 +21,69 @@ chi_files:
   Co: data/chi_extracted/WB4_Co_avg_85_86_txt_chi.dat
   Pt: data/chi_extracted/WB4_Pt_scan88_txt_chi.dat
 
-# --- Startstruktur ---
-# TODO: POSCAR-Datei fuer CoPt erstellen (z.B. L10-Struktur oder FCC)
-# Beispiel: 4x4x4 FCC mit 256 Atomen, 50% Co / 50% Pt
-structure_file: structures/CoPt.p1
+# --- Startstruktur (POSCAR-Format) ---
+# FCC-Mischkristall, 256 Atome (128 Co + 128 Pt), a = 3.80 Angstrom
+# Erzeugt mit: python scripts/generate_structures.py --preset CoPt
+structure_file: structures/CoPt_fcc.p1
 n_atoms: 256
 
-# --- Strukturvergleich (optional) ---
-# Relevante Strukturen fuer CoPt-Nanopartikel:
-#   - FCC (ungeordnet, Mischkristall)
-#   - L10 (geordnet, abwechselnd Co/Pt-Schichten)
-#   - L12 (Co3Pt oder CoPt3)
-# structure_comparison:
-#   fcc:
-#     file: structures/CoPt_fcc.p1
-#     label: FCC
-#   l10:
-#     file: structures/CoPt_l10.p1
-#     label: L10
+# --- Strukturvergleich ---
+# Relevante Strukturen fuer CoPt:
+#   FCC  = ungeordneter Mischkristall
+#   BCC  = kubisch-raumzentriert
+#   HCP  = hexagonal dichteste Packung
+#   L10  = geordnete tetragonale Phase (abwechselnde Co/Pt-Schichten)
+structure_comparison:
+  fcc:
+    file: structures/CoPt_fcc.p1
+    label: FCC
+    lattice_constant: 3.80
+    supercell: "4x4x4"
+  bcc:
+    file: structures/CoPt_bcc.p1
+    label: BCC
+    lattice_constant: 3.01
+    supercell: "4x4x8"
+  hcp:
+    file: structures/CoPt_hcp.p1
+    label: HCP
+    lattice_constant: 2.68
+    supercell: "8x4x4"
+  l10:
+    file: structures/CoPt_l10.p1
+    label: L10
+    lattice_constant: 3.80
+    supercell: "4x4x8"
 
 # ============================================================
-# EvAX-Parameter
+# EvAX-Parameter (siehe PARAMETER_GUIDE.md)
 # ============================================================
 
 parameters:
+  # Vergleichsraum: w = Wavelet (empfohlen)
   Space: w
+
+  # k-Bereich (pro Kante: [Co, Pt])
   k_min: 3
-  k_max: [11.5, 11.5]     # Pro Kante: [Co, Pt]
+  k_max: [11.5, 11.5]
   k_power: 2
+
+  # Mehrfachstreuung
   N_legs: 4
-  R_max_for_FEFF: [6, 6]  # Pro Kante
+  R_max_for_FEFF: [6, 6]
+
+  # Optimierung
   Maximal_step_length: 0.005
   Maximal_displacement: 0.4
   Initial_displacement: 0.01
+
+  # Konvergenz
   Stop_after: 100
   Froze_in: 150
   Number_of_states: 16
 
 # ============================================================
-# Parameter-Scan
+# Parameter-Scan Einstellungen
 # ============================================================
 parameter_scan:
   screening_iterations: 50
@@ -74,13 +99,16 @@ parameter_scan:
     Maximal_displacement: [0.2, 0.4]
     R_max_for_FEFF: [[4,4], [6,6]]
 
+# ============================================================
+# Strukturvergleich Einstellungen
+# ============================================================
 structure_compare:
   screening_iterations: 100
   froze_in: 150
-  max_parallel: 3
+  max_parallel: 4
 
 # ============================================================
-# Software-Pfade
+# Software-Pfade (relativ zum Projektverzeichnis)
 # ============================================================
 software:
   evax: software/EvAX-6.16_linux.exe

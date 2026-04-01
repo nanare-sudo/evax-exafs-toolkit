@@ -65,9 +65,23 @@ def generate_fcc(elements, counts, a, output, seed=42):
     n_cells = n_total // 4
     # Try to make it as cubic as possible
     nx = ny = nz = round(n_cells ** (1/3))
-    while nx * ny * nz * 4 != n_total:
-        nz += 1
-        if nx * ny * nz * 4 > n_total * 2:
+    if nx * ny * nz * 4 != n_total:
+        # Search for best factorization
+        found = False
+        for nx in range(1, n_cells + 1):
+            if n_cells % nx != 0:
+                continue
+            rem = n_cells // nx
+            for ny in range(nx, rem + 1):
+                if rem % ny != 0:
+                    continue
+                nz = rem // ny
+                if nx * ny * nz == n_cells:
+                    found = True
+                    break
+            if found:
+                break
+        if not found:
             raise ValueError(f'Cannot make FCC supercell with exactly {n_total} atoms. '
                              f'FCC needs multiples of 4. Try {(n_total // 4) * 4}.')
 
@@ -225,7 +239,7 @@ PRESETS = {
     },
     'CoPt': {
         'elements': ['Co', 'Pt'],
-        'counts': [128, 128],
+        'counts': [64, 64],
         'structures': {
             'fcc': {'a': 3.80, 'file': 'structures/CoPt_fcc.p1'},
             'bcc': {'a': 3.01, 'file': 'structures/CoPt_bcc.p1'},

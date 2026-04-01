@@ -22,10 +22,10 @@ chi_files:
   Pt: data/chi_extracted/WB4_Pt_scan88_txt_chi.dat
 
 # --- Startstruktur (POSCAR-Format) ---
-# FCC-Mischkristall, 256 Atome (128 Co + 128 Pt), a = 3.80 Angstrom
+# FCC-Mischkristall, 128 Atome (64 Co + 64 Pt), a = 3.80 Angstrom
 # Erzeugt mit: python scripts/generate_structures.py --preset CoPt
 structure_file: structures/CoPt_fcc.p1
-n_atoms: 256
+n_atoms: 128
 
 # --- Strukturvergleich ---
 # Relevante Strukturen fuer CoPt:

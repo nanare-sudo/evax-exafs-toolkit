@@ -285,16 +285,19 @@ def _make_parameters_dat(cfg, work_dir, overrides=None, structure_file=None):
 # ============================================================
 
 def _run_evax_in_dir(work_dir, timeout=86400):
-    """Run EvAX in the given directory. Returns (stdout+stderr, elapsed)."""
+    """Run EvAX in the given directory. Returns (log_path, elapsed)."""
     t0 = time.time()
-    result = subprocess.run(
-        ['./EvAX.exe', 'parameters.dat', '-autoES'],
-        cwd=str(work_dir),
-        capture_output=True,
-        timeout=timeout,
-    )
+    log_file = work_dir / 'evax_run.log'
+    with open(log_file, 'wb') as lf:
+        subprocess.run(
+            ['./EvAX.exe', 'parameters.dat', '-autoES'],
+            cwd=str(work_dir),
+            stdout=lf,
+            stderr=subprocess.STDOUT,
+            timeout=timeout,
+        )
     elapsed = time.time() - t0
-    return result.stdout + result.stderr, elapsed
+    return log_file, elapsed
 
 
 def _collect_results(work_dir, result_dir):
@@ -374,8 +377,8 @@ def run_single(cfg, dry_run=False):
     _make_parameters_dat(cfg, work_dir)
 
     print("Starte EvAX...")
-    log, elapsed = _run_evax_in_dir(work_dir)
-    (out_dir / 'evax.log').write_bytes(log)
+    log_file, elapsed = _run_evax_in_dir(work_dir)
+    shutil.copy2(log_file, out_dir / 'evax.log')
     _collect_results(work_dir, out_dir)
     shutil.rmtree(work_dir, ignore_errors=True)
 
@@ -459,8 +462,8 @@ def _run_scan_job(args):
     _make_parameters_dat(cfg, work_dir, overrides=overrides)
 
     try:
-        log, elapsed = _run_evax_in_dir(work_dir, timeout=7200)
-        (result_dir / 'evax.log').write_bytes(log)
+        log_file, elapsed = _run_evax_in_dir(work_dir, timeout=7200)
+        shutil.copy2(log_file, result_dir / 'evax.log')
         _collect_results(work_dir, result_dir)
         shutil.rmtree(work_dir, ignore_errors=True)
 
@@ -544,8 +547,8 @@ def _run_structure_job(args):
                          structure_file=struct_file)
 
     try:
-        log, elapsed = _run_evax_in_dir(work_dir, timeout=86400)
-        (comp_dir / 'evax.log').write_bytes(log)
+        log_file, elapsed = _run_evax_in_dir(work_dir, timeout=86400)
+        shutil.copy2(log_file, comp_dir / 'evax.log')
         _collect_results(work_dir, comp_dir)
         shutil.rmtree(work_dir, ignore_errors=True)
 

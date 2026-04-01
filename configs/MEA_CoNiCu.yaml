@@ -113,8 +113,9 @@ parameters:
   Maximal_displacement: 0.4
 
   # Initial_displacement: Anfaengliche Zufallsauslenkung (Angstrom)
-  #   Bricht die perfekte Gittersymmetrie. 0.01-0.05 ist ueblich.
-  Initial_displacement: 0.01
+  #   Bricht die perfekte Gittersymmetrie. Default laut Manual: 0.1.
+  #   Werte nahe 0.1 funktionieren typischerweise gut.
+  Initial_displacement: 0.1
 
   # --- Konvergenz (siehe PARAMETER_GUIDE.md und EvAX Manual Kap. 6.11) ---
   # Stop_after: Harter Stop nach N Iterationen (unabhaengig von Froze_in)
@@ -131,8 +132,8 @@ parameters:
   Froze_in: 1500
 
   # Number_of_states: Parallele Strukturkopien im EA
-  #   Standard: 16 (nicht aendern, es sei denn du weisst was du tust)
-  Number_of_states: 16
+  #   Default: 32. Gute Ergebnisse mit 16-256. Bei 1 = konventionelles RMC.
+  Number_of_states: 32
 
 # ============================================================
 # Parameter-Scan Einstellungen

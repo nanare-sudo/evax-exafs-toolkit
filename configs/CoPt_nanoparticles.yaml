@@ -75,12 +75,12 @@ parameters:
   # Optimierung
   Maximal_step_length: 0.005
   Maximal_displacement: 0.4
-  Initial_displacement: 0.01
+  Initial_displacement: 0.1
 
   # Konvergenz (siehe PARAMETER_GUIDE.md und EvAX Manual Kap. 6.11)
   Stop_after: 5000       # Harter Stop nach N Iterationen (-1 = nur Froze_in nutzen)
   Froze_in: 1500         # Ab hier: nur verbessernde Schritte, dann Konvergenzpruefung
-  Number_of_states: 16
+  Number_of_states: 32
 
 # ============================================================
 # Parameter-Scan Einstellungen

@@ -13,11 +13,11 @@ EXAFS berechnen: Für jedes Co-Atom in der Box berechnet FEFF (ein ab-initio Cod
 
 Vergleich mit Experiment: Die berechneten Spektren werden mit den gemessenen verglichen. EvAX benutzt dafür den Wavelet-Raum (Space w) — das ist eine 2D-Darstellung, die sowohl k- als auch R-Information enthält, also mehr Constraint als nur FT oder chi(k) allein.
 
-Atome bewegen: EvAX verschiebt ein zufälliges Atom um einen kleinen Betrag (max. 0.003 Å pro Schritt) und prüft: Wird der Fit besser?
+Atome bewegen: EvAX verschiebt alle Atome um einen kleinen zufaelligen Betrag (max. 0.005 Å pro Schritt, Default) und prüft: Wird der Fit besser?
 
 Ja → Verschiebung akzeptieren
 Nein → Verschiebung mit einer gewissen Wahrscheinlichkeit trotzdem akzeptieren (wie bei Simulated Annealing), um aus lokalen Minima herauszukommen
-Evolutionärer Algorithmus: EvAX hält 16 parallele Strukturen (Number_of_states). Diese "konkurrieren" miteinander. Gute Strukturen werden bevorzugt, schlechte sterben aus. Das verhindert, dass der Algorithmus in einem lokalen Minimum stecken bleibt.
+Evolutionärer Algorithmus: EvAX hält mehrere parallele Strukturen (Number_of_states, Default: 32). Diese "konkurrieren" miteinander — Selektion, Crossover und Mutation (wie in der biologischen Evolution). Gute Strukturen werden bevorzugt, schlechte sterben aus. Das verhindert, dass der Algorithmus in einem lokalen Minimum stecken bleibt.
 
 "Froze_in": Ab dieser Iteration werden nur noch verbessernde Verschiebungen akzeptiert (Simulated Annealing eingefroren). Danach wird alle time2 Iterationen geprueft, ob sich der Fit noch verbessert — falls nicht, endet der Lauf.
 

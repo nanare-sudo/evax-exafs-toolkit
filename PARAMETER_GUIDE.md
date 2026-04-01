@@ -23,7 +23,7 @@ mit Erklaerung, empfohlenen Werten und Auswirkungen.
 
 | Parameter | Werte | Empfehlung | Erklaerung |
 |-----------|-------|------------|------------|
-| `N_legs` | 2 oder 4 | **4** | Max. Anzahl der Streuarme pro Pfad. `2` = nur Einfachstreuung (Absorber → Nachbar → zurueck). `4` = inkl. Dreifach- und Vierfachstreuung ueber Zwischenatome. Deutlich genauer, aber langsamere FEFF-Rechnung. |
+| `N_legs` | 2, 3, 4, ... | **8** (Default) | Max. Anzahl der Streuarme pro Pfad. `2` = nur Einfachstreuung. `3`/`4` = inkl. Mehrfachstreuung. Default: 8. Das Manual empfiehlt, N_legs NICHT zum Reduzieren der Pfadanzahl zu verwenden — stattdessen sollte `FEFF_criteria` genutzt werden, um unwichtige Pfade nach ihrer Amplitude zu filtern. Fuer schnelle Tests kann N_legs=2 oder 4 verwendet werden. |
 | `R_max_for_FEFF` | Float (Angstrom) | **6** | Radius des Clusters um jeden Absorber fuer die FEFF-Rechnung. `4` = nur naechste Nachbarn (schnell). `6` = bis 3. Nachbarschale (empfohlen). `8` = sehr weit, meist unnoetig. Kann pro Kante verschieden sein. |
 
 ## Optimierungsparameter
@@ -32,8 +32,8 @@ mit Erklaerung, empfohlenen Werten und Auswirkungen.
 |-----------|-----|------------|------------|
 | `Maximal_step_length` | Float (Angstrom) | **0.005** | Max. Verschiebung eines Atoms pro Iteration. Kleinere Werte = feinere Optimierung, aber langsamer. `0.001` ist sehr fein, `0.01` ist grob. |
 | `Maximal_displacement` | Float (Angstrom) | **0.4** | Max. kumulative Verschiebung eines Atoms vom Startgitter. Begrenzt, wie weit sich die Struktur veraendern kann. `0.2` = konservativ (Atome bleiben nah am Gitterplatz). `0.4` = Standard. `0.8` = sehr flexibel (Vorsicht: kann zu unphysikalischen Strukturen fuehren). |
-| `Initial_displacement` | Float (Angstrom) | **0.01** | Zufaellige Anfangsauslenkung aller Atome. Bricht die perfekte Gittersymmetrie, damit die Optimierung starten kann. |
-| `Number_of_states` | Int | **16** | Anzahl paralleler Strukturkopien im evolutionaeren Algorithmus. Mehr States = bessere Exploration, aber mehr RAM. 16 ist Standard. |
+| `Initial_displacement` | Float (Angstrom) | **0.1** | Zufaellige Anfangsauslenkung aller Atome. Bricht die perfekte Gittersymmetrie, damit die Optimierung starten kann. Werte nahe 0.1 funktionieren laut Manual typischerweise gut. Kann auch auf -1 gesetzt werden fuer automatische Bestimmung (EvAX testet dann Werte zwischen 0.1 und 0.5). |
+| `Number_of_states` | Int | **32** | Anzahl paralleler Strukturkopien im evolutionaeren Algorithmus (Population im EA). Mehr States = bessere Exploration, aber mehr RAM. Default: 32. Gute Ergebnisse typischerweise mit 16-256. Bei Number_of_states=1 wird konventionelles RMC ohne EA verwendet. |
 
 ## Konvergenz und Abbruchkriterien
 
@@ -104,7 +104,7 @@ Froze_in: -1        # nur harten Stop nutzen
 Stop_after: -1      # kein harter Stop
 Froze_in: 1500
 time2: 100
-N_legs: 4
+N_legs: 4           # Default waere 8, aber 4 ist schneller und meist ausreichend
 R_max_for_FEFF: [6, 6, 6]
 Space: w
 k_power: 2

@@ -224,12 +224,12 @@ python run.py configs/MeineProbe.yaml --parameter-scan
 | `Space` | Vergleichsraum (k/R/Wavelet) | `w` (Wavelet) |
 | `k_min` / `k_max` | k-Bereich fuer den Fit | 3 / 11.5 |
 | `k_power` | k-Gewichtung (k^n) | 2 |
-| `N_legs` | Mehrfachstreuung (2=einfach, 4=inkl. MS) | 4 |
+| `N_legs` | Mehrfachstreuung (2=einfach, 4+=inkl. MS, Default: 8) | 4 |
 | `R_max_for_FEFF` | FEFF-Clusterradius (Angstrom) | 6 |
 | `Maximal_step_length` | Schrittweite pro Iteration | 0.005 |
 | `Maximal_displacement` | Max. Gesamtverschiebung | 0.4 |
-| `Stop_after` | Screening-Iterationen | 50 (Scan) / 100 (Prod.) |
-| `Froze_in` | Abbruch bei Stagnation | 50 (Scan) / 150 (Prod.) |
+| `Stop_after` | Harter Stop nach N Iterationen (-1 = aus) | 5000 (Prod.) / -1 (konvergenzbasiert) |
+| `Froze_in` | SA einfrieren ab Iteration N, dann Konvergenzpruefung | 1500 (Prod.) / 50 (Scan) |
 
 **Ausfuehrliche Erklaerung**: Siehe [PARAMETER_GUIDE.md](PARAMETER_GUIDE.md)
 
@@ -242,7 +242,7 @@ python run.py configs/MeineProbe.yaml --parameter-scan
 3. **Atom verschieben**: Zufaelliges Atom wird leicht verschoben
 4. **Vergleich**: Neues Spektrum wird mit Experiment verglichen (Residual)
 5. **Akzeptieren/Verwerfen**: Metropolis-Kriterium (wie Simulated Annealing)
-6. **Evolutionaere Selektion**: 16 parallele Strukturen konkurrieren
+6. **Evolutionaere Selektion**: 32 parallele Strukturen konkurrieren (Default)
 7. **Konvergenz**: Wenn sich nichts mehr verbessert → fertig
 
 Ergebnis: Optimierte 3D-Struktur, aus der man Koordinationszahlen,

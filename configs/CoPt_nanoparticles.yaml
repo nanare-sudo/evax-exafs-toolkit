@@ -77,9 +77,9 @@ parameters:
   Maximal_displacement: 0.4
   Initial_displacement: 0.01
 
-  # Konvergenz
-  Stop_after: 100
-  Froze_in: 150
+  # Konvergenz (siehe PARAMETER_GUIDE.md und EvAX Manual Kap. 6.11)
+  Stop_after: 5000       # Harter Stop nach N Iterationen (-1 = nur Froze_in nutzen)
+  Froze_in: 1500         # Ab hier: nur verbessernde Schritte, dann Konvergenzpruefung
   Number_of_states: 16
 
 # ============================================================

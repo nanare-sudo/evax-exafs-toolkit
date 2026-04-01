@@ -19,7 +19,7 @@ Ja → Verschiebung akzeptieren
 Nein → Verschiebung mit einer gewissen Wahrscheinlichkeit trotzdem akzeptieren (wie bei Simulated Annealing), um aus lokalen Minima herauszukommen
 Evolutionärer Algorithmus: EvAX hält 16 parallele Strukturen (Number_of_states). Diese "konkurrieren" miteinander. Gute Strukturen werden bevorzugt, schlechte sterben aus. Das verhindert, dass der Algorithmus in einem lokalen Minimum stecken bleibt.
 
-"Froze_in": Nach 3000 Iterationen ohne Verbesserung wird die Struktur als konvergiert betrachtet und der Lauf endet.
+"Froze_in": Ab dieser Iteration werden nur noch verbessernde Verschiebungen akzeptiert (Simulated Annealing eingefroren). Danach wird alle time2 Iterationen geprueft, ob sich der Fit noch verbessert — falls nicht, endet der Lauf.
 
 Was die Parameter bedeuten
 Parameter	Wert	Bedeutung

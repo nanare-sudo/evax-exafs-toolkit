@@ -250,8 +250,8 @@ Genauigkeit ↑    |    Rechenzeit ↑
 N_legs=4         |    N_legs=4
 R_max_for_FEFF=6 |    R_max_for_FEFF=6
 Space=w          |    Space=w
-Stop_after=300   |    Stop_after=300
-Froze_in=500     |    Froze_in=500
+Stop_after=5000  |    Stop_after=5000
+Froze_in=3000    |    Froze_in=3000
 ```
 
 Es gibt einen Trade-off: Genauere Einstellungen dauern laenger.
@@ -261,9 +261,9 @@ Der Parameterscan hilft, die optimale Kombination zu finden.
 
 **Problem: Run dauert ewig (>24h)**
 ```yaml
-# Reduziere Iterationen:
-Stop_after: 50
-Froze_in: 100
+# Reduziere Iterationen (harter Stop):
+Stop_after: 500
+Froze_in: 300
 # Oder reduziere FEFF-Genauigkeit:
 N_legs: 2
 R_max_for_FEFF: [4, 4, 4]

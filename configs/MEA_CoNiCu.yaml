@@ -116,17 +116,19 @@ parameters:
   #   Bricht die perfekte Gittersymmetrie. 0.01-0.05 ist ueblich.
   Initial_displacement: 0.01
 
-  # --- Konvergenz ---
-  # Stop_after: Iterationen in der Screening-Phase
-  #   (FEFF-Basis wird haeufiger aktualisiert)
-  #   Parameter-Scan: 50 reicht zum Vergleichen
-  #   Produktion:     100-300
-  Stop_after: 100
+  # --- Konvergenz (siehe PARAMETER_GUIDE.md und EvAX Manual Kap. 6.11) ---
+  # Stop_after: Harter Stop nach N Iterationen (unabhaengig von Froze_in)
+  #   Auf -1 setzen um nur Froze_in als Abbruch zu nutzen.
+  #   Parameter-Scan: 50-100
+  #   Produktion:     -1 (konvergenzbasiert)
+  Stop_after: 5000
 
-  # Froze_in: Abbruch nach N Iterationen ohne Verbesserung
+  # Froze_in: Ab dieser Iteration wird Simulated Annealing eingefroren
+  #   (nur noch verbessernde Schritte akzeptiert). Dann wird alle time2
+  #   Iterationen geprueft ob sich der Residual noch verbessert — falls nicht, Stop.
   #   Parameter-Scan: 50
-  #   Produktion:     150-500
-  Froze_in: 150
+  #   Produktion:     1500-3000
+  Froze_in: 1500
 
   # Number_of_states: Parallele Strukturkopien im EA
   #   Standard: 16 (nicht aendern, es sei denn du weisst was du tust)

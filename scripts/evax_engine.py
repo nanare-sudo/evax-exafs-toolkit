@@ -365,9 +365,9 @@ def run_single(cfg, dry_run=False):
 
     print(f"Modus: Einzellauf (Produktion)")
     print(f"  Struktur: {cfg['structure_file']}")
-    print(f"  Screening: {cfg['parameters']['Stop_after']} Iterationen")
-    print(f"  Froze_in:  {cfg['parameters']['Froze_in']}")
-    print(f"  Ausgabe:   {out_dir}\n")
+    print(f"  Stop_after: {cfg['parameters']['Stop_after']} Iterationen")
+    print(f"  Froze_in:   {cfg['parameters']['Froze_in']}")
+    print(f"  Ausgabe:    {out_dir}\n")
 
     if dry_run:
         print("(Trockenlauf — nichts wird ausgefuehrt)")
@@ -485,8 +485,9 @@ def run_parameter_scan(cfg, n_parallel=4, dry_run=False):
     scan_cfg = cfg.get('parameter_scan', {})
     print(f"Modus: Parameterstudie")
     print(f"  {len(jobs)} Kombinationen, {n_parallel} parallele Instanzen")
-    print(f"  Screening: {scan_cfg.get('screening_iterations', 50)} Iterationen")
-    print(f"  Ausgabe: {scan_dir}\n")
+    print(f"  Stop_after: {scan_cfg.get('screening_iterations', 50)} Iterationen")
+    print(f"  Froze_in:   {scan_cfg.get('froze_in', 50)}")
+    print(f"  Ausgabe:    {scan_dir}\n")
 
     if dry_run:
         for i, (name, params) in enumerate(jobs):
@@ -575,9 +576,9 @@ def run_structure_comparison(cfg, n_parallel=3, dry_run=False):
     sc_cfg = cfg.get('structure_compare', {})
     print(f"Modus: Strukturvergleich")
     print(f"  Strukturen: {', '.join(s.get('label', k) for k, s in structs.items())}")
-    print(f"  Screening: {sc_cfg.get('screening_iterations', 100)} Iterationen")
-    print(f"  Froze_in:  {sc_cfg.get('froze_in', 150)}")
-    print(f"  Ausgabe:   {comp_dir}\n")
+    print(f"  Stop_after: {sc_cfg.get('screening_iterations', 100)} Iterationen")
+    print(f"  Froze_in:   {sc_cfg.get('froze_in', 150)}")
+    print(f"  Ausgabe:    {comp_dir}\n")
 
     jobs = [(name, info['file']) for name, info in structs.items()]
 

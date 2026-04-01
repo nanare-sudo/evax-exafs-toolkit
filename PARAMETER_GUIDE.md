@@ -35,12 +35,22 @@ mit Erklaerung, empfohlenen Werten und Auswirkungen.
 | `Initial_displacement` | Float (Angstrom) | **0.01** | Zufaellige Anfangsauslenkung aller Atome. Bricht die perfekte Gittersymmetrie, damit die Optimierung starten kann. |
 | `Number_of_states` | Int | **16** | Anzahl paralleler Strukturkopien im evolutionaeren Algorithmus. Mehr States = bessere Exploration, aber mehr RAM. 16 ist Standard. |
 
-## Konvergenz
+## Konvergenz und Abbruchkriterien
+
+Es gibt **zwei unabhaengige** Abbruchbedingungen (siehe EvAX Manual Kap. 6.11):
 
 | Parameter | Typ | Empfehlung | Erklaerung |
 |-----------|-----|------------|------------|
-| `Stop_after` | Int | 50-300 | Iterationen in der **Screening-Phase**. In dieser Phase wird die FEFF-Streubasis haeufiger aktualisiert (= genauer, aber langsamer). Fuer Parameter-Scans reichen 50. Fuer Produktion: 100-300. |
-| `Froze_in` | Int | 50-500 | **Abbruchkriterium**: Der Lauf endet, wenn sich der Residual ueber diese Anzahl an Iterationen nicht mehr verbessert hat. Fuer Scans: 50. Fuer Produktion: 150-500. |
+| `Stop_after` | Int | 100-10000 | **Harter Stop**: Run endet nach exakt dieser Anzahl Iterationen, unabhaengig von `Froze_in`. Fuer kurze Tests: 50-100. Fuer Produktion: 1000-5000. Auf `-1` setzen um nur `Froze_in` als Abbruch zu nutzen. |
+| `Froze_in` | Int | 500-3000 | **Konvergenzbasierter Stop**: Ab dieser Iteration werden nur noch Verschiebungen akzeptiert, die den Fit verbessern (Simulated Annealing wird eingefroren). Dann wird alle `time2` Iterationen geprueft, ob sich der Residual ξ noch verbessert. Falls nicht → Stop. |
+| `time2` | Int | 100 | Pruefintervall nach `Froze_in`: alle `time2` Iterationen wird geprueft, ob ξ sich verbessert hat. Standard: 100. |
+
+**Wichtig**: `Stop_after` und `Froze_in` sind **unabhaengig**. Wenn `Stop_after=100` gesetzt ist, endet der Run nach 100 Iterationen — egal ob `Froze_in=150` oder `Froze_in=5000`.
+
+Typische Konfigurationen:
+- **Nur harter Stop**: `Stop_after=5000`, `Froze_in` auf sehr hohen Wert → Run endet nach genau 5000 Iterationen
+- **Nur Konvergenz**: `Stop_after=-1`, `Froze_in=1500`, `time2=100` → Run laeuft bis 1500 Iterationen ohne Verbesserung (empfohlen fuer Produktion)
+- **Kombination**: `Stop_after=5000`, `Froze_in=1500`, `time2=100` → Run endet bei dem Kriterium, das zuerst eintritt
 
 ## FEFF-Steuerung
 
@@ -69,30 +79,31 @@ Die Rechenzeit haengt hauptsaechlich von der Anzahl der Atome, FEFF-Aufrufe und 
 | 256 Atome, 2 Kanten, N_legs=4, R=6 | ~2 min | Weniger Kanten = schneller |
 | 256 Atome, 3 Kanten, N_legs=2, R=4 | ~30 sec | Schnell aber ungenau |
 
-**Gesamtzeit** = (Stop_after + erwartete Iterationen nach Screening) × Zeit/Iteration
+**Gesamtzeit** = Anzahl Iterationen × Zeit/Iteration
 
-Beispiel: Stop_after=100, Froze_in=150 → max. ~250 Iterationen × 3 min = **~12h**
+Beispiel: Stop_after=5000, 128 Atome, 2 Kanten, N_legs=4, R=6 → 5000 × ~2 min = **~7 Tage**
 
 ## Empfohlene Parameter-Kombinationen
 
-### Schneller Test (zum Ausprobieren, ~1h)
+### Schneller Test (Funktionstest, ~30 min)
 ```yaml
-Stop_after: 30
-Froze_in: 30
+Stop_after: 50
+Froze_in: -1       # nur harten Stop nutzen
 N_legs: 2
 R_max_for_FEFF: [4, 4, 4]
 ```
 
-### Parameter-Scan (~15 min pro Kombination)
-```yaml
-Stop_after: 50
-Froze_in: 50
-```
-
-### Produktion (~7h)
+### Parameter-Scan (~15-30 min pro Kombination)
 ```yaml
 Stop_after: 100
-Froze_in: 150
+Froze_in: -1        # nur harten Stop nutzen
+```
+
+### Produktion (konvergenzbasiert)
+```yaml
+Stop_after: -1      # kein harter Stop
+Froze_in: 1500
+time2: 100
 N_legs: 4
 R_max_for_FEFF: [6, 6, 6]
 Space: w
@@ -100,8 +111,9 @@ k_power: 2
 Maximal_step_length: 0.005
 ```
 
-### Langzeit-Produktion (~24-48h, bestmoegliches Ergebnis)
+### Langzeit-Produktion (bestmoegliches Ergebnis)
 ```yaml
-Stop_after: 300
-Froze_in: 500
+Stop_after: -1
+Froze_in: 3000
+time2: 100
 ```

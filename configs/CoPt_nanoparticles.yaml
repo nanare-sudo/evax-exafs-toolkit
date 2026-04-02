@@ -111,5 +111,5 @@ structure_compare:
 # Software-Pfade (relativ zum Projektverzeichnis)
 # ============================================================
 software:
-  evax: C:\Users\User\Desktop\ERP Hausarbeit\evax-exafs-toolkit\software\EvAX.exe
-  feff: C:\Users\User\Desktop\ERP Hausarbeit\evax-exafs-toolkit\software\feff85L.exe
+  evax: software\EvAX.exe
+  feff: software\feff85L.exe

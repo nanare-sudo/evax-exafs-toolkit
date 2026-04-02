@@ -7,6 +7,7 @@ Wird von run.py aufgerufen. Nicht direkt ausfuehren.
 
 import re
 import shutil
+import os
 import subprocess
 import sys
 import time
@@ -203,8 +204,17 @@ def _setup_workdir(cfg, work_dir, structure_file=None):
 
     # Symlink feff binary
     feff_link = work_dir / 'feff'
-    if not feff_link.exists():
-        feff_link.symlink_to(base / cfg['software']['feff'])
+    target_feff = base / cfg['software']['feff']
+
+    if feff_link.exists() or feff_link.is_symlink():
+        feff_link.unlink()
+
+    if os.name == "nt":
+        # Windows: echte Datei kopieren
+        shutil.copy2(target_feff, work_dir / 'feff.exe')
+    else:
+        # Linux: Symlink
+        feff_link.symlink_to(target_feff)
 
     # Copy run-FEFF.exe wrapper
     run_feff = work_dir / 'run-FEFF.exe'
@@ -288,7 +298,7 @@ def _run_evax_in_dir(work_dir, timeout=86400):
     """Run EvAX in the given directory. Returns (stdout+stderr, elapsed)."""
     t0 = time.time()
     result = subprocess.run(
-        ['./EvAX.exe', 'parameters.dat', '-autoES'],
+        [str((work_dir / 'EvAX.exe').resolve()), 'parameters.dat', '-autoES'],
         cwd=str(work_dir),
         capture_output=True,
         timeout=timeout,

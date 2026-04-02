@@ -1,0 +1,91 @@
+BEGIN
+              Title                              MEA_CoNiCu
+###############################################################################
+########################## STRUCTURE_MODEL_DEFINITION #########################
+###############################################################################
+              Number_of_structures                   1
+              Scale_coordinates_by                   1
+              Initial_displacement                   0.01
+              Weight                                 1
+              Doping_level                           -1
+              File_with_structure                    structures/MEA_CoNiCu.p1
+              Supercell                              1x1x1
+              Doping                                 none
+              pbc                                    1
+              labels_to_element_name                 1
+###############################################################################
+######################### STRUCTURE_MODEL_OPTIMIZATION ########################
+###############################################################################
+              Froze_in                               150
+              Stop_after                             100
+              Number_of_states                       16
+              Maximal_step_length                    0.005
+              Weight_increment                       0.0001
+              Acceptance_rate                        0.8
+              Energy_weight                          -1
+              Move_type                              move_all
+              MT_seed                                291 564 837 1110
+              adjust_acceptance                      1
+              adjust_weights                         0
+              Maximal_displacement                   0.4
+              Potential_type                         box
+###############################################################################
+############################### EXPERIMENTAL_DATA #############################
+###############################################################################
+              Number_of_spectra                      3
+              Columns_in_input                       2 2 2
+              Column_for_k                           1 1 1
+              Column_for_chi                         2 2 2
+              S02                                    1 1 1
+              dE0                                    0 0 0
+              k_power_in_IO                          0 0 0
+              Spectrum_weight                        1 1 1
+              File_with_experimental_EXAFS_signal    data/chi_extracted/MEA_Co_chi.dat data/chi_extracted/MEA_Ni_chi.dat data/chi_extracted/MEA_Cu_chi.dat
+              adjust_spectra_weights                 1
+###############################################################################
+############################### THEORETICAL_DATA ##############################
+###############################################################################
+              Update_basis_every_...                 2
+              Maximal_number_of_clusters             10000
+              Expansion_accuracy                     -1
+              FEFF_path                              feff
+              N_legs                                 4 4 4
+              R_max_for_FEFF                         6 6 6
+              FEFF_criteria                          1 1 1
+              Pathfinder_robustness                  0.5 0.5 0.5
+              Clustering_precision                   0.001 0.001 0.001
+              Edge                                   Co Ni Cu
+              Edge_type                              K K K
+              Polarization                           none none none
+              r_scf                                  4.3356 4.3356 4.3356
+              ca                                     0.1 0.1 0.1
+              n_scf                                  30 30 30
+              n_mix                                  1 1 1
+###############################################################################
+####################### THEORY_AND_EXPERIMENT_COMPARISON ######################
+###############################################################################
+              Space                                  w
+              WT_type                                1 1 1
+              k_min                                  3 3 3
+              k_max                                  11.5 11.5 11.5
+              dk                                     0.05 0.05 0.05
+              k_power                                2 2 2
+              FT_window_type                         1 1 1
+              R_min                                  0.5 0.5 0.5
+              R_max                                  5 5 5
+              R_max_for_1st_shell                    3 3 3
+              R0_for_WT                              2.75 2.75 2.75
+###############################################################################
+#################################### OUTPUT ###################################
+###############################################################################
+              File_for_calculated_EXAFS_signal       output_files/Co/EXAFS.dat output_files/Ni/EXAFS.dat output_files/Cu/EXAFS.dat
+              File_for_FT                            output_files/Co/expFT.dat output_files/Ni/expFT.dat output_files/Cu/expFT.dat
+              File_for_BFT                           output_files/Co/expBFT.dat output_files/Ni/expBFT.dat output_files/Cu/expBFT.dat
+              File_for_WT                            output_files/Co/expWT.dat output_files/Ni/expWT.dat output_files/Cu/expWT.dat
+              File_for_interpolated_EXAFS_signal     output_files/Co/ipolEXAFS.dat output_files/Ni/ipolEXAFS.dat output_files/Cu/ipolEXAFS.dat
+              Convergence                            output_files/output.dat
+              xyz_file                                output_files/final.xyz
+              Save_state                             output_files/restart
+              Save_state_every                       200
+              Total_iterations:                         0
+              Residuals:

@@ -111,5 +111,5 @@ structure_compare:
 # Software-Pfade (relativ zum Projektverzeichnis)
 # ============================================================
 software:
-  evax: software/EvAX-6.16_linux.exe
-  feff: feff85exafs/legacy/mod/MONO/feff85L
+  evax: C:\Users\User\Desktop\ERP Hausarbeit\evax-exafs-toolkit\software\EvAX.exe
+  feff: C:\Users\User\Desktop\ERP Hausarbeit\evax-exafs-toolkit\software\feff85L.exe
